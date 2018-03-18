@@ -1,0 +1,8 @@
+function ECEF = llh_geodetic2ecef(LLH)
+r_Earth = 6378137;
+e = 0.0881819;
+lambda = deg2rad(LLH(1));
+phi = deg2rad(LLH(2));
+h = LLH(3);
+N = r_Earth/sqrt(1 - (e^2)*(sin(lambda))^2);
+ECEF = [(N+h)*cos(lambda)*cos(phi); (N+h)*cos(lambda)*sin(phi); N*(1 - e^2)*sin(lambda)];
