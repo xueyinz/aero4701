@@ -41,9 +41,4 @@ plot3(pos_ECI(1,:),pos_ECI(2,:),pos_ECI(3,:), 'linewidth', 2, 'color', 'red');
 
 % PlotEarthLatLong;
 PlotEarthLatLong;
-plot(pos_LL(2,:), pos_LL(1,:), 'r');
-
-%% ground station perspective
-
-% ground station
-g
+scatter(pos_LL(2,:), pos_LL(1,:), 3, 'r', 'filled');
