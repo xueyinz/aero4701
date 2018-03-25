@@ -30,7 +30,7 @@ props.Cdata = topo;
 
 % Plot Earth
 surface(x,y,z,props);
-title('ECI Co-ordinates of Orbit')
+title('ECI Co-ordinates of Orbit');
 axis equal
 grid on
 xlabel('x-axis')
