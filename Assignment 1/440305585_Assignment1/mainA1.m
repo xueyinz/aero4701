@@ -14,8 +14,8 @@ writing_report = true;
 addpath('./constants/', './tle/', './coordinate_conversions/', './orbit_simulation/', './Mitch_Bryson/');
 globalConstants;
 sat = extract_from_TLE('TLE_data.txt');
-start_epoch = sprintf("%02d/%02d/%4d %02d:%02d:%02d", sat.day, sat.month, sat.year, sat.hour, sat.min, sat.sec);
-end_epoch = sprintf("%02d/%02d/%4d %02d:%02d:%02d", sat.day + 1, sat.month, sat.year, sat.hour, sat.min, sat.sec);
+start_epoch = sprintf("%02d/%02d/%4d %02d:%02d:%02d UT", sat.day, sat.month, sat.year, sat.hour, sat.min, sat.sec);
+end_epoch = sprintf("%02d/%02d/%4d %02d:%02d:%02d UT", sat.day + 1, sat.month, sat.year, sat.hour, sat.min, sat.sec);
 fprintf("\nOrbit of %s over a 24hr period from %s to %s\n\n", sat.name, start_epoch, end_epoch);
 
 %% simulate a 24h orbit starting from TLE Epoch
