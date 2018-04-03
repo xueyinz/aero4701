@@ -32,4 +32,4 @@ t_VE = [2018 3 20 16 16 0]; % time since last Vernal Equinox alignment (nearest 
 
 scatter_size = 0.5;         % for scatter graphs - size of scatter point
 
-ground_LLH_deg = [-23.7; 133.87; 0];    % ground station in LLH [deg, deg, m]
+ground_LLH_deg = [67.858428; 20.966880; 385.8];    % ground station in LLH [deg, deg, m]
