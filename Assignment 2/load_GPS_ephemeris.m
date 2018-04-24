@@ -1,16 +1,22 @@
 %% 440305585
 % AERO4701
 %
-% input: [Sat. #, a (m), e, i (deg), Omega (deg), w (deg), M0 (deg), t0 (s)]
+% input: [satellite #, a (m), e, i (deg), Omega (deg), w (deg), M0 (deg), t0 (s)]
+% output: struct
+%   - output fields are the same as the input fields [sat #, a, e, i,
+%   Omega, w, M0, t0]
 
 function GPS_ephemeris = load_GPS_ephemeris(text_file)
 
     global mu_Earth;
 
+    % open text file
     fid = fopen(text_file);
     GPS_ephemeris = [];
     
+    % loop through text file line by line
     while ~feof(fid)
+        
         tline = fgetl(fid);
         tline = str2double(strsplit(tline, '  '));
         tline = tline(:, 2:end);            % get rid of empty column
@@ -23,8 +29,9 @@ function GPS_ephemeris = load_GPS_ephemeris(text_file)
         sat.M0 = deg2rad(tline(7));         % satellite mean anomaly at Epoch [rad]
         sat.t0 = tline(8);                  % satellite Epoch time [s]
         sat.n = sqrt(mu_Earth/(sat.a^3));   % satellite mean motion [rad/s]
-        sat.p = sat.a*(1 - (sat.e)^2);                              % semilatus rectum [m]
+        sat.p = sat.a*(1 - (sat.e)^2);      % semilatus rectum [m]
         GPS_ephemeris = [GPS_ephemeris; sat];
+        
     end
     
 end
