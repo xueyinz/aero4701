@@ -9,18 +9,25 @@
 % outputs:  E = eccentric anomaly [rad]
 
 
-function E = mean2eccentric(M, e)
+function E_out = mean2eccentric(M_in, e)
 
     global E_threshold;
 
-    E_old = M;
-    E_new = E_old - (E_old-e*sin(E_old)- M)/(1 - e*cos(E_old));
-    
-    while(abs(E_new - E_old) > E_threshold)
-        E_old = E_new;
-		E_new = E_old - (E_old - e*sin(E_old) - M)/(1 - e*cos(E_old));
+    E_out = zeros(1, length(M_in));
+    for ii = 1:length(M_in)
+
+        M = M_in(ii);
+        E = M;
+
+        temp = E - e*sin(E) - M;
+
+        while abs(temp) > E_threshold
+            E = E - (E - e*sin(E)- M)/(1-e*cos(E));
+            temp = E - e*sin(E) - M;
+        end
+        
+        E_out(ii) = E;
+        
     end
-    
-    E = E_new;
 
 end

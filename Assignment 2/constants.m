@@ -22,7 +22,7 @@ global sec_per_day;
 sec_per_day = 24*60*60;             % seconds per day [s]
 
 global E_threshold;
-E_threshold = 0.0001;               % error threshold when solving for eccentric anomaly
+E_threshold = 0.0000001;               % error threshold when solving for eccentric anomaly
 
 t_VE = 7347737.336;                 % time since last vernal equinox passage [s]
 

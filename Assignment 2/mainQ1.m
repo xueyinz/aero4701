@@ -40,7 +40,7 @@ for ii = 1:n_satellites
     theta = 2*atan2(sqrt((1 + sat.e)/(1 - sat.e))*sin(E/2), cos(E/2));
     
     % radius
-    r = sat.p*ones_t/(1 + sat.e.*cos(theta));
+    r = sat.p./(1 + sat.e.*cos(theta));
     
     % get ECI position vectors
     orbits(ii).pos_ECI = orbit2ECI(r, theta, sat.i, sat.Omega, sat.w);
@@ -74,7 +74,7 @@ for ii = 1:n_satellites
     theta = 2*atan2(sqrt((1 + sat.e)/(1 - sat.e))*sin(E/2), cos(E/2));
     
     % radius
-    r = sat.p*ones_t_uav/(1 + sat.e.*cos(theta));
+    r = sat.p./(1 + sat.e.*cos(theta));
     
     % get ECI position vectors
     orbits_uav(ii).pos_ECI = orbit2ECI(r, theta, sat.i, sat.Omega, sat.w);
