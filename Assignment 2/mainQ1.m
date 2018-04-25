@@ -79,7 +79,8 @@ for ii = 1:n_satellites
     % get ECI position vectors
     orbits_uav(ii).pos_ECI = orbit2ECI(r, theta, sat.i, sat.Omega, sat.w);
     
-%     orbits_uav(ii).pos_ECEF = eci2ecef_vector(orbits_uav(ii).pos_ECI, sat.t0 - t_VE + t_uav);
+    % get ECEF position vectors
+    orbits_uav(ii).pos_ECEF = eci2ecef_vector(orbits_uav(ii).pos_ECI, t_uav - t_VE);
         
 end
 
@@ -129,7 +130,7 @@ for time_stamp = 1:size(GPS_pseudorange,1)
             satellite = reading.sat_num(measurement);
             
             % ECEF position of relevant satellite at current time-stamp
-            X_SV = orbits_uav(satellite).pos_ECI(:, time_stamp);
+            X_SV = orbits_uav(satellite).pos_ECEF(:, time_stamp);
             
             % temporary variable
             range = sqrt(sum((X_SV - x_0(XYZ)).^2));
@@ -150,7 +151,7 @@ for time_stamp = 1:size(GPS_pseudorange,1)
         end
         
         % change in estimated state x
-        delta_x = (transpose(H)*H)\transpose(H)*delta_rho;
+        delta_x = inv(transpose(H)*H)*transpose(H)*delta_rho;
         
         % update estimate for state x
         x_0 = x_0 + delta_x;
@@ -183,12 +184,12 @@ for time_stamp = 1:size(GPS_pseudorange,1)
         x_0 = [NaN; NaN; NaN; NaN];     % get rid of funky measurement
     end
     
-    uav.pos_ECI(:,time_stamp) = x_0;
+    uav.pos_ECEF(:,time_stamp) = x_0;
     
 end
 
 % convert uav coordinates into other frames
-uav.pos_ECEF = eci2ecef_vector(uav.pos_ECI(XYZ,:), sat.t0 - t_VE + t_uav);
+% uav.pos_ECEF = eci2ecef_vector(uav.pos_ECI(XYZ,:), sat.t0 - t_VE + t_uav);
 uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF(XYZ,:));
 uav.pos_LGCV = ecef_ground2lgcv_vector(uav.pos_ECEF(XYZ,:), ground_LLH);
 uav.pos_POLAR = cartesian2polar_vector(uav.pos_LGCV);
@@ -261,9 +262,12 @@ if plotting == true
     hold on;
     plot3(uav.pos_LGCV(1,:), uav.pos_LGCV(2,:), uav.pos_LGCV(3,:), '.');
     
-    title('UAV in LGCV coordinates')
-    xlabel('X (m)')
-    ylabel('Y (m)')
-    zlabel('Z (m)')
+    title('UAV in LGCV coordinates');
+    xlabel('X (m)');
+    ylabel('Y (m)');
+    zlabel('Z (m)');
+    grid on;
 
 end
+
+save('xuey');
