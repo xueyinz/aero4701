@@ -8,12 +8,14 @@ clearvars;
 close all;
 
 plotting = true;
-save_figures = false;   % used for when saving graphs for the report
+save_figures = true;   % used for when saving graphs for the report
 
 %% initialisation
 
-addpath('./Q1_data/', './Q1_useful_code/', './Q2_useful_code/', './coordinate_conversions/', './orbit_simulation/', './earth_plots/');
-constants;              % load constants
+addpath('./Q1_data/', './Q1_useful_code/', './coordinate_conversions/', './orbit_simulation/', './earth_plots/', './Q1_scripts/');
+
+% load constants
+constants;
 
 % load GPS ephemeris data
 GPS_ephemeris = load_GPS_ephemeris('GPSsat_ephem.txt');
@@ -28,7 +30,7 @@ uav_truth = load_UAV_position('UAVPosition.txt');
 
 %% Q1.A - satellite trajectory over a 12hr period
 
-mainQ1_A;
+% mainQ1_A;
 
 %% Q1.B - satellite trajectory over the time period of the GPS pseudorange data
 

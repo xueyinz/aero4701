@@ -4,6 +4,8 @@
 %
 % mainQ1_B.m
 
+%% Q1.B - multi-lateration of pseudorange data using non-linear least squares method
+
 orbits_uav.pos_ECI = 0;
 orbits_uav.pos_ECEF = 0;
 orbits_uav = repmat(orbits_uav, 1, size(GPS_ephemeris, 1));
@@ -35,7 +37,7 @@ for ii = 1:n_satellites
         
 end
 
-%% Q1.B - multi-lateration of pseudorange data using non-linear least squares method
+%% estimation of UAV position using non-linear least squares of GPS pseudorange data
 
 % initialisations
 GDOP = zeros(size(GPS_pseudorange,1),1);
@@ -44,6 +46,7 @@ HDOP = zeros(size(GPS_pseudorange,1),1);
 VDOP = zeros(size(GPS_pseudorange,1),1);
 TDOP = zeros(size(GPS_pseudorange,1),1);
 uav.pos_ECEF = zeros(4, size(GPS_pseudorange,1));
+uav.pos_ECEF_filtered = zeros(4, size(GPS_pseudorange,1));
 
 % at each unique time-stamp in the pseudorange data, make a position
 % estimate for the uav: x = [x, y, z, cb]
@@ -118,6 +121,10 @@ for time_stamp = 1:size(GPS_pseudorange,1)
     VDOP(time_stamp) = sqrt(V(3,3));
     TDOP(time_stamp) = sqrt(V(4,4));
     
+    % store estimated state
+    uav.pos_ECEF(:,time_stamp) = x_0;
+    
+    
     % check rank of V
     if rank(V) ~= 4
         
@@ -127,19 +134,33 @@ for time_stamp = 1:size(GPS_pseudorange,1)
         VDOP(time_stamp) = NaN;
         TDOP(time_stamp) = NaN;
         
-        clc;
         x_0 = [NaN; NaN; NaN; NaN];     % get rid of erroneous measurement
+        
+%         fprintf('Found erroneous measurement.\n');
+        clc;
         
     end
     
-    uav.pos_ECEF(:,time_stamp) = x_0;
+    % store estimated state after removing bad value
+    uav.pos_ECEF_filtered(:,time_stamp) = x_0;
     
 end
 
-% convert uav coordinates into other frames
-uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF(XYZ,:));
-uav.pos_LGCV = ecef_ground2lgcv_vector(uav.pos_ECEF(XYZ,:), ground_LLH);
+% remove estimations where clock bias is too large or too small because
+% clock bias should be similar for the same GPS receiver
+outliers = isoutlier(uav.pos_ECEF_filtered(CB,:));
+uav.pos_ECEF_filtered(XYZ, outliers) = NaN;
+
+%% coordinate transforms
+
+% convert simulation truth of UAV coordinates into other frames
+uav_truth.pos_POLAR = cartesian2polar_vector(uav_truth.pos_LGCV);
+
+% convert estimated UAV coordinates into other frames
+uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF_filtered(XYZ,:));
+uav.pos_LGCV = ecef_ground2lgcv_vector(uav.pos_ECEF_filtered(XYZ,:), ground_LLH);
 uav.pos_POLAR = cartesian2polar_vector(uav.pos_LGCV);
-uav.pos_RANGE = uav.pos_POLAR(1,:);
-uav.pos_AZ_deg = rad2deg(uav.pos_POLAR(2,:));           % convert from radians to degrees for azimuth
-uav.pos_EL_deg = rad2deg(uav.pos_POLAR(3,:));           % convert from radians to degrees for elevation
+% uav.pos_POLAR_deg = [uav.pos_POLAR(1,:); deg2rad(uav.pos_POLAR(2:3,:))];
+% uav.pos_RANGE = uav.pos_POLAR(1,:);
+% uav.pos_AZ_deg = rad2deg(uav.pos_POLAR(AZIMUTH,:));           % convert from radians to degrees for azimuth
+% uav.pos_EL_deg = rad2deg(uav.pos_POLAR(ELEVATION,:));           % convert from radians to degrees for elevation

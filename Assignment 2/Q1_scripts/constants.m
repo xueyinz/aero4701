@@ -22,7 +22,7 @@ global sec_per_day;
 sec_per_day = 24*60*60;             % seconds per day [s]
 
 global E_threshold;
-E_threshold = 0.0000001;               % error threshold when solving for eccentric anomaly
+E_threshold = 0.000001;               % error threshold when solving for eccentric anomaly
 
 t_VE = 7347737.336;                 % time since last vernal equinox passage [s]
 
@@ -39,6 +39,8 @@ max_iterations = 10;                % maximum number of iterations before stoppi
 XYZ = 1:3;                          % indices in state vector for x, y, z position
 CB = 4;                             % index in state vector for clock bias
 
-% ground station
-ground_LLH = [deg2rad(-34.76); deg2rad(150.03); 680];                         % [deg, deg, m]
-% ground_LLH = [deg2rad(ground_LLH_deg(1:2)); ground_LLH_deg(3)]; % [rad, rad, m]
+ground_LLH = [deg2rad(-34.76); deg2rad(150.03); 680];   % ground station LLH [deg, deg, m]
+
+AZIMUTH = 2;
+ELEVATION = 3;
+ALTITUDE = 3;
