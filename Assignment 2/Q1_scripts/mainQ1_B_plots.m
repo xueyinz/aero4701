@@ -9,7 +9,7 @@
 figure;
 plot3(uav_truth.pos_LGCV(1,:), uav_truth.pos_LGCV(2,:), uav_truth.pos_LGCV(3,:), '.');
 hold on;
-plot3(uav.pos_LGCV(1,:), uav.pos_LGCV(2,:), uav.pos_LGCV(3,:), 'r.');
+plot3(uav.pos_LGCV_filtered(1,:), uav.pos_LGCV_filtered(2,:), uav.pos_LGCV_filtered(3,:), 'r.');
 grid on;
 % axis equal;
 title('3D plot of UAV position w.r.t. to ground station (LGCV)');
@@ -28,7 +28,7 @@ end
 
 figure;
 [plotx_truth, ploty_truth] = overheadplotcoords(uav_truth.pos_POLAR(AZIMUTH,:), uav_truth.pos_POLAR(ELEVATION,:));
-[plotx, ploty] = overheadplotcoords(uav.pos_POLAR(AZIMUTH,:), uav.pos_POLAR(ELEVATION,:));
+[plotx, ploty] = overheadplotcoords(uav.pos_POLAR_filtered(AZIMUTH,:), uav.pos_POLAR_filtered(ELEVATION,:));
 plot(plotx_truth, ploty_truth, '.');
 hold on;
 plot(plotx, ploty, 'ro');
@@ -45,7 +45,7 @@ end
 %% altitude vs. time
 
 figure;
-plot(t_uav, uav.pos_LLH(ALTITUDE,:));
+plot(t_uav, uav.pos_LLH_filtered(ALTITUDE,:));
 title('Altitude w.r.t. ground station vs. time (LLH)');
 xlabel('Epoch time (s)');
 ylabel('Altitude (m)');
@@ -79,7 +79,6 @@ end
 figure;
 bar(t_uav, n_measurements_filtered);
 hold on;
-grey = 0.6;
 bar(t_uav, n_measurements_removed, 'FaceColor', [grey grey grey], 'EdgeColor', [grey grey grey]);
 title('Number of satellites used at each time-stamp');
 xlabel('Epoch time (s) (discrete)');
@@ -87,4 +86,19 @@ ylabel('Number of satellites used');
 legend('Readings used in estimation', 'Readings removed from estimation', 'Location', 'southeast');
 if save_figures == true
     saveas(gcf, 'n_satellites_used.png');
+end
+
+%% user clock bias
+
+figure;
+plot(t_uav, uav.clock_bias_filtered, '.');
+hold on;
+plot(t_uav, uav.clock_bias_removed, '.');
+grid on;
+xlim([min(t_uav) max(t_uav)]);
+title('User clock bias');
+xlabel('Epoch time (s)');
+ylabel('User clock bias (m)');
+if save_figures == true
+    saveas(gcf, 'user_clock_bias.png');
 end

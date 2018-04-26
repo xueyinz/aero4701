@@ -46,8 +46,9 @@ PDOP = zeros(size(GPS_pseudorange,1),1);
 HDOP = zeros(size(GPS_pseudorange,1),1);
 VDOP = zeros(size(GPS_pseudorange,1),1);
 TDOP = zeros(size(GPS_pseudorange,1),1);
-uav.pos_ECEF = zeros(4, size(GPS_pseudorange,1));
-uav.pos_ECEF_filtered = zeros(4, size(GPS_pseudorange,1));
+uav.pos_ECEF = zeros(3, size(GPS_pseudorange,1));
+uav.pos_ECEF_filtered = zeros(3, size(GPS_pseudorange,1));
+uav.clock_bias = zeros(1, size(GPS_pseudorange,1));
 
 % at each unique time-stamp in the pseudorange data, make a position
 % estimate for the uav: x = [x, y, z, cb]
@@ -123,8 +124,8 @@ for time_stamp = 1:size(GPS_pseudorange,1)
     TDOP(time_stamp) = sqrt(V(4,4));
     
     % store estimated state
-    uav.pos_ECEF(:,time_stamp) = x_0;
-    
+    uav.pos_ECEF(:,time_stamp) = x_0(XYZ);
+    uav.clock_bias(:, time_stamp) = x_0(CB);
     
     % check rank of V
     if rank(V) ~= 4
@@ -143,7 +144,8 @@ for time_stamp = 1:size(GPS_pseudorange,1)
     end
     
     % store estimated state after removing bad value
-    uav.pos_ECEF_filtered(:,time_stamp) = x_0;
+    uav.pos_ECEF_filtered(:,time_stamp) = x_0(XYZ);
+    uav.clock_bias_filtered(:, time_stamp) = x_0(CB);
     
 end
 
@@ -153,8 +155,8 @@ end
 uav_truth.pos_POLAR = cartesian2polar_vector(uav_truth.pos_LGCV);
 
 % convert estimated UAV coordinates into other frames
-uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF(XYZ,:));
-uav.pos_LGCV = ecef_ground2lgcv_vector(uav.pos_ECEF(XYZ,:), ground_LLH);
+uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF);
+uav.pos_LGCV = ecef_ground2lgcv_vector(uav.pos_ECEF, ground_LLH);
 uav.pos_POLAR = cartesian2polar_vector(uav.pos_LGCV);
 % uav.pos_POLAR_deg = [uav.pos_POLAR(1,:); deg2rad(uav.pos_POLAR(2:3,:))];
 % uav.pos_RANGE = uav.pos_POLAR(1,:);
@@ -163,30 +165,35 @@ uav.pos_POLAR = cartesian2polar_vector(uav.pos_LGCV);
 
 %% removing outliers
 
-% remove estimations where clock bias is too large or too small because
-% clock bias should be similar for the same GPS receiver
-outliers = isoutlier(uav.pos_ECEF_filtered(CB,:));
+% assume that satellite clock bias is negligible compared to user receiver
+% clock bias. Remove estimations where clock bias is too large or too small
+% because clock bias should be similar for the same GPS receiver
+outliers = isoutlier(uav.clock_bias);
 
-uav.pos_ECEF_filtered(XYZ, outliers) = NaN;
+uav.pos_ECEF_filtered(:, outliers) = NaN;
 uav.pos_ECEF_removed = uav.pos_ECEF;
-uav.pos_ECEF_removed(XYZ, ~outliers) = NaN;
+uav.pos_ECEF_removed(:, ~outliers) = NaN;
 
 uav.pos_LLH_filtered = uav.pos_LLH;
-uav.pos_LLH_filtered(XYZ, outliers) = NaN;
+uav.pos_LLH_filtered(:, outliers) = NaN;
 uav.pos_LLH_removed = uav.pos_LLH;
-uav.pos_LLH_removed(XYZ, ~outliers) = NaN;
+uav.pos_LLH_removed(:, ~outliers) = NaN;
 
 uav.pos_LGCV_filtered = uav.pos_LGCV;
-uav.pos_LGCV_filtered(XYZ, outliers) = NaN;
+uav.pos_LGCV_filtered(:, outliers) = NaN;
 uav.pos_LGCV_removed = uav.pos_LGCV;
-uav.pos_LGCV_removed(XYZ, ~outliers) = NaN;
+uav.pos_LGCV_removed(:, ~outliers) = NaN;
 
 uav.pos_POLAR_filtered = uav.pos_POLAR;
-uav.pos_POLAR_filtered(XYZ, outliers) = NaN;
+uav.pos_POLAR_filtered(:, outliers) = NaN;
 uav.pos_POLAR_removed = uav.pos_POLAR;
-uav.pos_POLAR_removed(XYZ, ~outliers) = NaN;
+uav.pos_POLAR_removed(:, ~outliers) = NaN;
 
 n_measurements_filtered = n_measurements;
 n_measurements_filtered(outliers) = NaN;
 n_measurements_removed = n_measurements;
 n_measurements_removed(~outliers) = NaN;
+
+uav.clock_bias_filtered(:, outliers) = NaN;
+uav.clock_bias_removed = uav.clock_bias;
+uav.clock_bias_removed(:, ~outliers) = NaN;
