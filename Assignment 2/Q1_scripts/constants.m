@@ -30,7 +30,6 @@ t_VE = 7347737.336;                 % time since last vernal equinox passage [s]
 
 dt = 120;                           % time steps [s]
 t_12hr = 0:dt:(sec_per_day/2);      % time vector for 12 hours
-ones_t = ones(1, length(t_12hr));   % array of ones of length t_12hr
 
 %% Q1.B
 

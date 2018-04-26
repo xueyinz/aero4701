@@ -24,4 +24,13 @@ sec_per_day = 24*60*60;             % seconds per day [s]
 global E_threshold;
 E_threshold = 0.000001;             % error threshold when solving for eccentric anomaly
 
-t_VE = 7347737.336;                 % time since last vernal equinox passage [s]
+sat.a = 26400e3;                    % satellite semimajor axis [m]
+sat.e = 0.001;                      % satellite eccentricity
+sat.i = deg2rad(55);                % satellite inclination angle [rad]
+sat.Omega = deg2rad(120);           % satellite right ascension of ascending node [rad]
+sat.w = 0;                          % satellite argument of perigee [rad]
+sat.M0 = 0;                         % satellite mean anomaly at epoch [rad]
+sat.n = sqrt(mu_Earth/(sat.a^3));   % satellite mean motion [rad/s]
+sat.p = sat.a*(1 - (sat.e)^2);      % satellite semilatus rectum [m]
+
+t_24hr = 0:100:sec_per_day;         % time vector for 24hr period

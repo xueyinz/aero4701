@@ -14,7 +14,7 @@ for ii = 1:n_satellites
     sat = GPS_ephemeris(ii);
     
     % mean anomaly: t = t1 - t0
-    M = sat.M0*ones_t + sat.n.*(t_12hr - sat.t0);
+    M = sat.M0 + sat.n.*(t_12hr - sat.t0);
     
     % eccentric anomaly
     E = mean2eccentric(M, sat.e);
