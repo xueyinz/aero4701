@@ -19,9 +19,9 @@ ylabel('Y (east) (m)');
 zlabel('Z (down) (m)');
 legend('Simulation truth', 'Estimations from GPS pseudorange', 'Filtered out estimations', 'Location', 'northeast');
 if save_figures == true
-    saveas(gcf, '3D_plot.png');
+    saveas(gcf, 'Q1B_3D_plot.png');
     view(2);
-    saveas(gcf, '3D_plot_xy.png');
+    saveas(gcf, 'Q1B_3D_plot_xy.png');
     view(3);
 end
 
@@ -42,7 +42,7 @@ xlabel('Azimuth (degrees)');
 ylabel('Elevation (degrees)');
 legend('Simulation truth', 'Estimations from GPS pseudorange', 'Filtered out estimations', 'Location', 'eastoutside');
 if save_figures == true
-    saveas(gcf, '2D_overhead_plot.png');
+    saveas(gcf, 'Q1B_2D_overhead_plot.png');
 end
 
 %% altitude vs. time
@@ -59,7 +59,7 @@ ylabel('Altitude (m)');
 legend('Simulation truth', 'Estimations from GPS pseudorange', 'Filtered out estimations', 'Location', 'southwest');
 xlim([min(t_uav) max(t_uav)]);
 if save_figures == true
-    saveas(gcf, 'altitude_vs_time.png');
+    saveas(gcf, 'Q1B_altitude_vs_time.png');
 end
 
 %% DOP
@@ -83,7 +83,7 @@ xlabel('Epoch time (s)');
 ylabel('Dilution of precision');
 legend('GDOP', 'PDOP', 'HDOP', 'VDOP', 'TDOP', 'GDOP filtered out', 'PDOP filtered out', 'HDOP filtered out', 'VDOP filtered out', 'TDOP filtered out', 'Location', 'northwest');
 if save_figures == true
-    saveas(gcf, 'DOP.png');
+    saveas(gcf, 'Q1B_DOP.png');
 end
 
 %% number of satellite used
@@ -98,7 +98,7 @@ xlabel('Epoch time (s) (discrete)');
 ylabel('Number of satellites used');
 legend('Readings used in estimation', 'Readings removed from estimation', 'Location', 'southeast');
 if save_figures == true
-    saveas(gcf, 'n_satellites_used.png');
+    saveas(gcf, 'Q1B_n_satellites_used.png');
 end
 
 %% user clock bias
@@ -114,7 +114,7 @@ xlabel('Epoch time (s)');
 ylabel('User clock bias (m)');
 legend('Estimations from GPS pseudorange', 'Filtered out estimations', 'Location', 'southwest');
 if save_figures == true
-    saveas(gcf, 'user_clock_bias.png');
+    saveas(gcf, 'Q1B_user_clock_bias.png');
 end
 
 %% azimuth-elevation of satellites visible to GPS receiver w.r.t. ground station (polar)
@@ -140,5 +140,5 @@ ax.RTickLabels = {'El = 90deg','60','30','0'};
 title('Azimuth-elevation of visible satellites (polar w.r.t. ground station)');
 legend('Satellites visible at the start','Satellites visible at the end');
 if save_figures == true
-    saveas(gcf, 'azimuth-elevation.png');
+    saveas(gcf, 'Q1B_azimuth-elevation.png');
 end

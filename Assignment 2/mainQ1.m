@@ -12,7 +12,7 @@ save_figures = true;   % used for when saving graphs for the report
 
 %% initialisation
 
-addpath('./Q1_data/', './Q1_useful_code/', './coordinate_conversions/', './orbit_simulation/', './earth_plots/', './Q1_scripts/');
+addpath('./Q1_data/', './Q1_scripts/', './coordinate_conversions/', './orbit_simulation/');
 
 % load constants
 constants;
