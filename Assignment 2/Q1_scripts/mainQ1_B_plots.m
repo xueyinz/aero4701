@@ -70,3 +70,21 @@ title('Dilution of precision vs. time');
 xlabel('Epoch time (s)');
 ylabel('Dilution of precision');
 legend('GDOP', 'PDOP', 'HDOP', 'VDOP', 'TDOP', 'Location', 'northwest');
+if save_figures == true
+    saveas(gcf, 'DOP.png');
+end
+
+%% number of satellite used
+
+figure;
+bar(t_uav, n_measurements_filtered);
+hold on;
+grey = 0.6;
+bar(t_uav, n_measurements_removed, 'FaceColor', [grey grey grey], 'EdgeColor', [grey grey grey]);
+title('Number of satellites used at each time-stamp');
+xlabel('Epoch time (s) (discrete)');
+ylabel('Number of satellites used');
+legend('Readings used in estimation', 'Readings removed from estimation', 'Location', 'southeast');
+if save_figures == true
+    saveas(gcf, 'n_satellites_used.png');
+end

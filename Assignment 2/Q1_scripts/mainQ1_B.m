@@ -40,6 +40,7 @@ end
 %% estimation of UAV position using non-linear least squares of GPS pseudorange data
 
 % initialisations
+n_measurements = zeros(1, size(GPS_pseudorange,1));
 GDOP = zeros(size(GPS_pseudorange,1),1);
 PDOP = zeros(size(GPS_pseudorange,1),1);
 HDOP = zeros(size(GPS_pseudorange,1),1);
@@ -54,17 +55,17 @@ for time_stamp = 1:size(GPS_pseudorange,1)
     
     % current reading of pseudorange measurements
     reading = GPS_pseudorange(time_stamp);
-    n_measurements = numel(reading.sat_num);
+    n_measurements(time_stamp) = numel(reading.sat_num);
     
     % initial position estimate: centre of the Earth with no clock bias
     x_0 = [0; 0; 0; 0];
     
     % initial Jacobian matrix: one row for each satellite observation, 4
     % columns for each state parameter
-    H = ones(n_measurements, 4);
+    H = ones(n_measurements(time_stamp), 4);
     
     % residual errors
-    delta_rho = zeros(n_measurements, 1);
+    delta_rho = zeros(n_measurements(time_stamp), 1);
     
     % update estimation until convergence or we reach the maximum number of
     % iterations
@@ -72,7 +73,7 @@ for time_stamp = 1:size(GPS_pseudorange,1)
         
         % update Jacobian matrix for each satellite measurement at the
         % current reading
-        for measurement = 1:n_measurements
+        for measurement = 1:n_measurements(time_stamp)
             
             % number of current satellite of interest
             satellite = reading.sat_num(measurement);
@@ -146,21 +147,46 @@ for time_stamp = 1:size(GPS_pseudorange,1)
     
 end
 
-% remove estimations where clock bias is too large or too small because
-% clock bias should be similar for the same GPS receiver
-outliers = isoutlier(uav.pos_ECEF_filtered(CB,:));
-uav.pos_ECEF_filtered(XYZ, outliers) = NaN;
-
 %% coordinate transforms
 
 % convert simulation truth of UAV coordinates into other frames
 uav_truth.pos_POLAR = cartesian2polar_vector(uav_truth.pos_LGCV);
 
 % convert estimated UAV coordinates into other frames
-uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF_filtered(XYZ,:));
-uav.pos_LGCV = ecef_ground2lgcv_vector(uav.pos_ECEF_filtered(XYZ,:), ground_LLH);
+uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF(XYZ,:));
+uav.pos_LGCV = ecef_ground2lgcv_vector(uav.pos_ECEF(XYZ,:), ground_LLH);
 uav.pos_POLAR = cartesian2polar_vector(uav.pos_LGCV);
 % uav.pos_POLAR_deg = [uav.pos_POLAR(1,:); deg2rad(uav.pos_POLAR(2:3,:))];
 % uav.pos_RANGE = uav.pos_POLAR(1,:);
 % uav.pos_AZ_deg = rad2deg(uav.pos_POLAR(AZIMUTH,:));           % convert from radians to degrees for azimuth
 % uav.pos_EL_deg = rad2deg(uav.pos_POLAR(ELEVATION,:));           % convert from radians to degrees for elevation
+
+%% removing outliers
+
+% remove estimations where clock bias is too large or too small because
+% clock bias should be similar for the same GPS receiver
+outliers = isoutlier(uav.pos_ECEF_filtered(CB,:));
+
+uav.pos_ECEF_filtered(XYZ, outliers) = NaN;
+uav.pos_ECEF_removed = uav.pos_ECEF;
+uav.pos_ECEF_removed(XYZ, ~outliers) = NaN;
+
+uav.pos_LLH_filtered = uav.pos_LLH;
+uav.pos_LLH_filtered(XYZ, outliers) = NaN;
+uav.pos_LLH_removed = uav.pos_LLH;
+uav.pos_LLH_removed(XYZ, ~outliers) = NaN;
+
+uav.pos_LGCV_filtered = uav.pos_LGCV;
+uav.pos_LGCV_filtered(XYZ, outliers) = NaN;
+uav.pos_LGCV_removed = uav.pos_LGCV;
+uav.pos_LGCV_removed(XYZ, ~outliers) = NaN;
+
+uav.pos_POLAR_filtered = uav.pos_POLAR;
+uav.pos_POLAR_filtered(XYZ, outliers) = NaN;
+uav.pos_POLAR_removed = uav.pos_POLAR;
+uav.pos_POLAR_removed(XYZ, ~outliers) = NaN;
+
+n_measurements_filtered = n_measurements;
+n_measurements_filtered(outliers) = NaN;
+n_measurements_removed = n_measurements;
+n_measurements_removed(~outliers) = NaN;
