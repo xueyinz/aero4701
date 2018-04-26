@@ -9,6 +9,8 @@
 orbits_uav.pos_ECI = 0;
 orbits_uav.pos_ECEF = 0;
 orbits_uav = repmat(orbits_uav, 1, size(GPS_ephemeris, 1));
+orbits_pos_LGCV = zeros(3, 2, n_satellites);
+orbits_pos_POLAR = zeros(3, 2, n_satellites);
 
 % for each satellite, get the trajectory at each unique time-stamp in the
 % GPS pseudorange data
@@ -34,6 +36,10 @@ for ii = 1:n_satellites
     
     % get ECEF position vectors
     orbits_uav(ii).pos_ECEF = eci2ecef_vector(orbits_uav(ii).pos_ECI, t_uav - t_VE);
+    
+    % get satellite position at start and end times (for plotting later)
+    orbits_pos_LGCV(:,:,ii) = ecef_ground2lgcv_vector(orbits_uav(ii).pos_ECEF(:, [1,end]), ground_LLH);
+    orbits_pos_POLAR(:,:,ii) = cartesian2polar_vector(orbits_pos_LGCV(:,:,ii));
         
 end
 
@@ -49,6 +55,7 @@ TDOP = zeros(size(GPS_pseudorange,1),1);
 uav.pos_ECEF = zeros(3, size(GPS_pseudorange,1));
 uav.pos_ECEF_filtered = zeros(3, size(GPS_pseudorange,1));
 uav.clock_bias = zeros(1, size(GPS_pseudorange,1));
+uav.clock_bias_filtered = zeros(1, size(GPS_pseudorange,1));
 
 % at each unique time-stamp in the pseudorange data, make a position
 % estimate for the uav: x = [x, y, z, cb]
@@ -123,10 +130,6 @@ for time_stamp = 1:size(GPS_pseudorange,1)
     VDOP(time_stamp) = sqrt(V(3,3));
     TDOP(time_stamp) = sqrt(V(4,4));
     
-    % store estimated state
-    uav.pos_ECEF(:,time_stamp) = x_0(XYZ);
-    uav.clock_bias(:, time_stamp) = x_0(CB);
-    
     % check rank of V
     if rank(V) ~= 4
         
@@ -143,9 +146,13 @@ for time_stamp = 1:size(GPS_pseudorange,1)
         
     end
     
-    % store estimated state after removing bad value
-    uav.pos_ECEF_filtered(:,time_stamp) = x_0(XYZ);
-    uav.clock_bias_filtered(:, time_stamp) = x_0(CB);
+    % store estimated state
+    uav.pos_ECEF(:,time_stamp) = x_0(XYZ);
+    uav.clock_bias(:, time_stamp) = x_0(CB);
+    
+%     % store estimated state after removing bad value
+%     uav.pos_ECEF_filtered(:,time_stamp) = x_0(XYZ);
+%     uav.clock_bias_filtered(:, time_stamp) = x_0(CB);
     
 end
 
@@ -155,29 +162,26 @@ end
 uav_truth.pos_POLAR = cartesian2polar_vector(uav_truth.pos_LGCV);
 
 % convert estimated UAV coordinates into other frames
-uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF);
+% uav.pos_LLH = ecef2llh_geocentric_vector(uav.pos_ECEF);
 uav.pos_LGCV = ecef_ground2lgcv_vector(uav.pos_ECEF, ground_LLH);
 uav.pos_POLAR = cartesian2polar_vector(uav.pos_LGCV);
-% uav.pos_POLAR_deg = [uav.pos_POLAR(1,:); deg2rad(uav.pos_POLAR(2:3,:))];
-% uav.pos_RANGE = uav.pos_POLAR(1,:);
-% uav.pos_AZ_deg = rad2deg(uav.pos_POLAR(AZIMUTH,:));           % convert from radians to degrees for azimuth
-% uav.pos_EL_deg = rad2deg(uav.pos_POLAR(ELEVATION,:));           % convert from radians to degrees for elevation
 
 %% removing outliers
 
 % assume that satellite clock bias is negligible compared to user receiver
 % clock bias. Remove estimations where clock bias is too large or too small
 % because clock bias should be similar for the same GPS receiver
-outliers = isoutlier(uav.clock_bias);
+outliers = isoutlier(uav.clock_bias, 'grubbs');
 
+uav.pos_ECEF_filtered = uav.pos_ECEF;
 uav.pos_ECEF_filtered(:, outliers) = NaN;
 uav.pos_ECEF_removed = uav.pos_ECEF;
 uav.pos_ECEF_removed(:, ~outliers) = NaN;
 
-uav.pos_LLH_filtered = uav.pos_LLH;
-uav.pos_LLH_filtered(:, outliers) = NaN;
-uav.pos_LLH_removed = uav.pos_LLH;
-uav.pos_LLH_removed(:, ~outliers) = NaN;
+% uav.pos_LLH_filtered = uav.pos_LLH;
+% uav.pos_LLH_filtered(:, outliers) = NaN;
+% uav.pos_LLH_removed = uav.pos_LLH;
+% uav.pos_LLH_removed(:, ~outliers) = NaN;
 
 uav.pos_LGCV_filtered = uav.pos_LGCV;
 uav.pos_LGCV_filtered(:, outliers) = NaN;
@@ -194,6 +198,28 @@ n_measurements_filtered(outliers) = NaN;
 n_measurements_removed = n_measurements;
 n_measurements_removed(~outliers) = NaN;
 
+uav.clock_bias_filtered = uav.clock_bias;
 uav.clock_bias_filtered(:, outliers) = NaN;
 uav.clock_bias_removed = uav.clock_bias;
 uav.clock_bias_removed(:, ~outliers) = NaN;
+
+GDOP_filtered = GDOP;
+PDOP_filtered = PDOP;
+HDOP_filtered = HDOP;
+VDOP_filtered = VDOP;
+TDOP_filtered = TDOP;
+GDOP_filtered(outliers) = NaN;
+PDOP_filtered(outliers) = NaN;
+HDOP_filtered(outliers) = NaN;
+VDOP_filtered(outliers) = NaN;
+TDOP_filtered(outliers) = NaN;
+GDOP_removed = GDOP;
+PDOP_removed = PDOP;
+HDOP_removed = HDOP;
+VDOP_removed = VDOP;
+TDOP_removed = TDOP;
+GDOP_removed(~outliers) = NaN;
+PDOP_removed(~outliers) = NaN;
+HDOP_removed(~outliers) = NaN;
+VDOP_removed(~outliers) = NaN;
+TDOP_removed(~outliers) = NaN;

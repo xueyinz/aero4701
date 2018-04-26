@@ -30,7 +30,7 @@ uav_truth = load_UAV_position('UAVPosition.txt');
 
 %% Q1.A - satellite trajectory over a 12hr period
 
-% mainQ1_A;
+mainQ1_A;
 
 %% Q1.B - satellite trajectory over the time period of the GPS pseudorange data
 
@@ -40,7 +40,7 @@ mainQ1_B;
 
 if plotting == true
     
-%     mainQ1_A_plots;
+    mainQ1_A_plots;
     
     mainQ1_B_plots;
     
