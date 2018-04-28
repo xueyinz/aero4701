@@ -12,18 +12,11 @@ function params = nlls_orbit_determ(obs,GS_ECEF,init_posvel_guess)
 %
 % Outputs: params - Orbital parameters: [a,e,i,RAAN,AoP,Mo (at epoch)]
 %
-
-% NOTE: Elements of this function are missing! you will need to fill in
-% these gaps to get the code working!
-
-% This version of the code is designed for a single ground station; you
-% will need to make several adjustments for multiple ground stations 
-
 % See Week 6 Slides 18 to 30 for Details on non-linear least squares for
 % orbit determination from ground station tracking measurements
 
 % FILL IN HERE
-time_last_vernal_equinox = ....
+time_last_vernal_equinox = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialise H matrix and error vector
@@ -71,12 +64,12 @@ while (norm(delta_x) > tol)
         
     end
     
-    % Use non-linear least squares to estimate error in x
-    delta_x = inv(H'*H)*H'*delta_y;
+%     % Use non-linear least squares to estimate error in x
+%     delta_x = inv(H'*H)*H'*delta_y;
     
     % Alternative formulation (much better, type "help mldivide" for
     % details)
-    % delta_x = (H'*H)\H'*delta_y;
+    delta_x = (H'*H)\H'*delta_y;
     
     X = X + delta_x;
     

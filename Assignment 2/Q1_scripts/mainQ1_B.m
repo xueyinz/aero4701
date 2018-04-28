@@ -19,20 +19,11 @@ for ii = 1:n_satellites
     % current satellite
     sat = GPS_ephemeris(ii);
     
-    % mean anomaly: t = t1 - t0
-    M = sat.M0 + sat.n.*(t_uav - sat.t0);
-    
-    % eccentric anomaly
-    E = mean2eccentric(M, sat.e);
-    
-    % true anomaly
-    theta = 2*atan2(sqrt((1 + sat.e)/(1 - sat.e))*sin(E/2), cos(E/2));
-    
-    % radius
-    r = sat.p./(1 + sat.e.*cos(theta));
+    % time since epoch
+    t_since_epoch = t_uav - sat.t0;
     
     % get ECI position vectors
-    orbits_uav(ii).pos_ECI = orbit2ECI(r, theta, sat.i, sat.Omega, sat.w);
+    orbits_uav(ii).pos_ECI = orbit2ECI(sat, t_since_epoch);
     
     % get ECEF position vectors
     orbits_uav(ii).pos_ECEF = eci2ecef_vector(orbits_uav(ii).pos_ECI, t_uav - t_VE);
