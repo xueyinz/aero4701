@@ -15,7 +15,7 @@ save_figures = true;   % used for when saving graphs for the report
 addpath('./Q1_data/', './Q1_scripts/', './coordinate_conversions/', './orbit_simulation/');
 
 % load constants
-constants;
+Q1_constants;
 
 % load GPS ephemeris data
 GPS_ephemeris = load_GPS_ephemeris('GPSsat_ephem.txt');

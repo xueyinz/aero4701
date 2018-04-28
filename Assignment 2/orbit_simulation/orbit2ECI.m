@@ -1,4 +1,16 @@
-
+%% 440305585
+% AERO4701
+%
+% Calculate the ECI position coordinates of the satellite using the orbital
+% parameters inputted.
+%
+% inputs:   r = radius vector [m]
+%           theta = true anomaly vector [rad]
+%           i = inclination angle scalar [rad]
+%           Omega = right ascension of ascending node scalar [rad]
+%           w = argument of perigee scalar [rad]
+% outputs:  pos_ECI = satellite position coordinates in ECI frame
+%                       (3xN matrix where N is the number of time-steps)
 
 function pos_ECI = orbit2ECI(r, theta, i, Omega, w)
     

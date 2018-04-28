@@ -1,7 +1,7 @@
 %% 440305585
 % AERO4701
 %
-% constants.m
+% Q1_constants.m
 
 global omega;
 omega = 7.292115e-5;                % Earth rotation rate [rad/sec]
