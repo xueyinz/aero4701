@@ -6,8 +6,9 @@
 % input:    deviation = error deviation amount about 0
 % output:   error = random error about 0
 
-function error = random_error(deviation)
+function noisy_measurements = add_random_error(measurements, deviation)
 
-    error = -deviation + rand()*2*deviation;
-
+    error = -deviation + rand(size(measurements))*2*deviation;
+    noisy_measurements = measurements + error;
+    
 end

@@ -36,11 +36,14 @@ t_24hr = 0:100:sec_per_day;         % time vector for 24hr period
 % ground station in LLH [rad; rad; m]
 ground_LLH = [deg2rad(38.8086); deg2rad(-104.5257); 1901];
 
-% index for elevation in polar coordinates
+% index constants for polar coordinates
+RANGE = 1;
+AZ_EL = 2:3;
 ELEVATION = 3;
 
 % minimum elevation angle to be able to see above the horizon
 min_elevation = deg2rad(7.5);
 
-range_error = 5;                    % range tracking error deviation [m]
+% tracking measurement error
 angle_error = deg2rad(0.0001);      % angle tracking error deviation [rad]
+range_error = 5;                    % range tracking error deviation [m]

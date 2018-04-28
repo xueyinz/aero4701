@@ -1,7 +1,7 @@
 %% 440305585
 % AERO4701
 %
-% Convert Cartesian coordinates into polar coordinates
+% Convert polar coordinates into Cartesian coordinates
 %
 % inputs:   pos_POLAR = [r, az, el] = polar coordinates [m, rad, rad]
 % outputs:	pos_CARTESIAN = [x; y; z] = Cartesian/LGCV coordinates [m, m, m]

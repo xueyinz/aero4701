@@ -17,6 +17,8 @@ addpath('./Q2_scripts/', './coordinate_conversions/', './orbit_simulation/');
 % load constants
 Q2_constants;
 
+%% Get clean satellite orbit
+
 % mean anomaly
 M = sat.M0 + sat.n.*(t_24hr);
 
@@ -42,15 +44,29 @@ pos_LGCV = ecef_ground2lgcv_vector(pos_ECEF, ground_LLH);
 % get polar position vectors
 pos_POLAR = cartesian2polar_vector(pos_LGCV);
 
+%% Ground station perspective of satellite
+
 % portion of the satellite orbit visible to ground station
-visible_POLAR = pos_POLAR(:, (pos_POLAR(ELEVATION,:) > min_elevation));
+visible_POLAR = pos_POLAR;
+visible_POLAR(:, (pos_POLAR(ELEVATION,:) < min_elevation)) = NaN;
 
 % times at which satellite is visible to ground station
-t_visible = t_24hr(pos_POLAR(ELEVATION,:) > min_elevation);
+t_visible = t_24hr;
+t_visible(pos_POLAR(ELEVATION,:) < min_elevation) = NaN;
 
+%% Add random error to the observations
 
-error = -deviation + rand()*2*deviation;
+% noisy observations in polar coordinates
+visible_POLAR_noisy = visible_POLAR;
+visible_POLAR_noisy(AZ_EL,:) = add_random_error(visible_POLAR_noisy(AZ_EL,:), angle_error);
+visible_POLAR_noisy(RANGE,:) = add_random_error(visible_POLAR_noisy(RANGE,:), range_error);
 
+% noisy positions in ECI frame
+visible_ECI_noisy = polar2eci_vector(visible_POLAR_noisy, ground_LLH, t_24hr);
+
+%% Herrick-Gibbs technique for initial orbit determination
+
+v_estimates = herrick_gibbs(visible_ECI_noisy, t_visible);
 
 % plot results
 if plotting == true

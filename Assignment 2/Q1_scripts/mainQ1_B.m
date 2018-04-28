@@ -53,9 +53,7 @@ HDOP = zeros(size(GPS_pseudorange,1),1);
 VDOP = zeros(size(GPS_pseudorange,1),1);
 TDOP = zeros(size(GPS_pseudorange,1),1);
 uav.pos_ECEF = zeros(3, size(GPS_pseudorange,1));
-uav.pos_ECEF_filtered = zeros(3, size(GPS_pseudorange,1));
 uav.clock_bias = zeros(1, size(GPS_pseudorange,1));
-uav.clock_bias_filtered = zeros(1, size(GPS_pseudorange,1));
 
 % at each unique time-stamp in the pseudorange data, make a position
 % estimate for the uav: x = [x, y, z, cb]
@@ -146,13 +144,9 @@ for time_stamp = 1:size(GPS_pseudorange,1)
         
     end
     
-    % store estimated state
+    % store estimated state after removing bad value
     uav.pos_ECEF(:,time_stamp) = x_0(XYZ);
     uav.clock_bias(:, time_stamp) = x_0(CB);
-    
-%     % store estimated state after removing bad value
-%     uav.pos_ECEF_filtered(:,time_stamp) = x_0(XYZ);
-%     uav.clock_bias_filtered(:, time_stamp) = x_0(CB);
     
 end
 
