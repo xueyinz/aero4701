@@ -1,4 +1,4 @@
-%% 440305585
+a%% 440305585
 % AERO4701
 % Assignment 2
 %
@@ -45,6 +45,7 @@ VDOP = zeros(size(GPS_pseudorange,1),1);
 TDOP = zeros(size(GPS_pseudorange,1),1);
 uav.pos_ECEF = zeros(3, size(GPS_pseudorange,1));
 uav.clock_bias = zeros(1, size(GPS_pseudorange,1));
+x_0 = [0; 0; 0; 0];    % initial position estimate: centre of the Earth with no clock bias
 
 % at each unique time-stamp in the pseudorange data, make a position
 % estimate for the uav: x = [x, y, z, cb]
@@ -53,9 +54,6 @@ for time_stamp = 1:size(GPS_pseudorange,1)
     % current reading of pseudorange measurements
     reading = GPS_pseudorange(time_stamp);
     n_measurements(time_stamp) = numel(reading.sat_num);
-    
-    % initial position estimate: centre of the Earth with no clock bias
-    x_0 = [0; 0; 0; 0];
     
     % initial Jacobian matrix: one row for each satellite observation, 4
     % columns for each state parameter
@@ -128,9 +126,9 @@ for time_stamp = 1:size(GPS_pseudorange,1)
         VDOP(time_stamp) = NaN;
         TDOP(time_stamp) = NaN;
         
-        x_0 = [NaN; NaN; NaN; NaN];     % get rid of erroneous measurement
-        
-%         fprintf('Found erroneous measurement.\n');
+        % get rid of erroneous measurement
+        uav.pos_ECEF(:,time_stamp) = [NaN; NaN; NaN];
+        uav.clock_bias(:, time_stamp) = NaN;
         clc;
         
     end

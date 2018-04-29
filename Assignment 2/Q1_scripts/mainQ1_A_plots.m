@@ -5,13 +5,19 @@
 % mainQ1_A_plots.m
 
 PlotEarthSphere;
-view(3);
+view(0,90);
 
 % plot all the orbits
 for ii = 1:n_satellites
     plot3(orbits(ii).pos_ECI(1,:), orbits(ii).pos_ECI(2,:), orbits(ii).pos_ECI(3,:));
     hold on;
 end
+
+if save_figures == true
+    saveas(gcf, 'Q1A_12hr_orbits_xy.png');
+end
+
+view(3);
 
 if save_figures == true
     saveas(gcf, 'Q1A_12hr_orbits.png');

@@ -12,7 +12,6 @@ for ii = 1:n_satellites
     
     % current satellite
     sat = GPS_ephemeris(ii);
-    
     % time since 
     t_since_epoch = t_12hr - sat.t0;
     

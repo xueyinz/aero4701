@@ -9,11 +9,7 @@
 
 function pos_ECEF = llh_geocentric2ecef(pos_LLH)
 
-    if ((size(pos_LLH,1) ~= 3) || (size(pos_LLH,2) ~= 1))
-        error('Check that dimensions of inputs to llh_geocentric2ecef match: ([lat;long;alt])')
-    end
-
-    global r_Earth;
+    r_Earth = 6378137;
     
     lambda = pos_LLH(1);
     phi = pos_LLH(2);
