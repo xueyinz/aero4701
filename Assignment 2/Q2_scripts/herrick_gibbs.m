@@ -16,7 +16,7 @@
 function initial_estimates = herrick_gibbs(pos_ECI, t)
 
     global mu_Earth
-
+    
     n_estimates = size(pos_ECI,2) - 2;          % subtract 2 because the first and last measurements don't have velocity estimates
     initial_estimates = NaN(6, n_estimates);    % array of estimate results
     

@@ -7,7 +7,7 @@
 clearvars;
 close all;
 
-plotting = false;
+plotting = true;
 save_figures = false;   % used for when saving graphs for the report
 
 %% initialisation
@@ -44,35 +44,64 @@ pos_ECI_noisy = polar2eci_vector(pos_POLAR_noisy, ground_LLH, t_24hr);
 
 %% Ground station perspective of satellite
 
+% logical array for when satellite is visible
+visibility = pos_POLAR(ELEVATION,:) > min_elevation;
+
 % times at which satellite is visible to ground station
 t_visible = t_24hr;
-t_visible(pos_POLAR(ELEVATION,:) < min_elevation) = NaN;
+t_visible(~visibility) = NaN;
 
 % portion of the satellite orbit visible to ground station
 visible_POLAR_noisy = pos_POLAR_noisy;
-visible_POLAR_noisy(:, (pos_POLAR(ELEVATION,:) < min_elevation)) = NaN;
+visible_POLAR_noisy(:, ~visibility) = NaN;
 visible_ECI_noisy = polar2eci_vector(visible_POLAR_noisy, ground_LLH, t_visible);
 
 %% Herrick-Gibbs technique for initial orbit determination
 
 % estimate velocity at the second to the second last tracking measurements
-initial_estimate = herrick_gibbs(pos_ECI_noisy, t_visible);
-first_estimate = initial_estimate(:, ~isnan(t_visible));
-first_estimate = first_estimate(:,2);
-t_first_estimate = t_visible(~isnan(t_visible));
-t_first_estimate = t_first_estimate(:,2);
+initial_estimates = herrick_gibbs(visible_ECI_noisy, t_visible);
+
+% logical array for when we have Herrick-Gibbs estimates
+estimate_available = ~isnan(initial_estimates(1,:));
+
+% time-stamps corresponding to each estimate
+t_estimates = t_visible(estimate_available);
+
+% use the first estimate for NLLS
+first_estimate = initial_estimates(:, estimate_available);
+first_estimate = first_estimate(:,1);
+t_first_estimate = t_visible(estimate_available);
+t_first_estimate = t_first_estimate(1);
+
+% use the first Herrick-Gibbs estimate for position and velocity to get the orbital parameters
+initial_parameters = posvel2orbital(first_estimate);
+initial_satellite = get_satellite_struct(initial_parameters);
+initial_satellite.OrbitalParameters = 'Initial (Herrick-Gibbs)';
+initial_satellite.t0 = t_first_estimate;
+initial_pos_ECI = orbit2ECI(initial_satellite, t_24hr - t_first_estimate);
 
 %% Universal conic-section solution with NLLS method
 
 % prepare input variables for nlls_orbit_determ script
-observations = [t_visible(~isnan(t_visible)); visible_POLAR_noisy(:, ~isnan(t_visible))]';
-ground_ECEF = llh_geocentric2ecef(ground_LLH);
-refined_estimate = nlls_orbit_determ(observations,ground_LLH,first_estimate);
+observations = [t_visible(visibility); visible_POLAR_noisy(:, visibility)]';
 
-%% simulate results
+% nlls method to refine the orbital parameters
+refined_parameters = nlls_orbit_determ(observations, ground_LLH, first_estimate, t_first_estimate);
+refined_satellite = get_satellite_struct(refined_parameters);
+refined_satellite.OrbitalParameters = 'Refined (NLLS)';
+refined_satellite.t0 = t_first_estimate;
+refined_pos_ECI = orbit2ECI(refined_satellite, t_24hr - t_first_estimate);
 
-sat_estimate = get_satellite_struct(refined_estimate);
-ps_ECI_estimate = orbit2ECI(sat_estimate, t_visible);
+%% Results
+
+% original orbital parameters
+print_orbital_parameters(sat, initial_satellite, refined_satellite);
+
+% average satellite position errors
+noise_profile = pos_ECI_noisy - pos_ECI;
+initial_error = sum(abs(initial_pos_ECI - pos_ECI_noisy));
+refined_error = sum(abs(refined_pos_ECI - pos_ECI_noisy));
+
 
 % plot results
 if plotting == true
@@ -80,6 +109,20 @@ if plotting == true
     % plot the 24hr orbit
     PlotEarthSphere;
     view(3);
-    plot3(pos_ECI(1,:), pos_ECI(2,:), pos_ECI(3,:));
+    plot3(pos_ECI(1,:), pos_ECI(2,:), pos_ECI(3,:), 'r');
+    grid on;
+    hold on;
+    plot3(initial_pos_ECI(1,:), initial_pos_ECI(2,:), initial_pos_ECI(3,:), 'g');
+    plot3(refined_pos_ECI(1,:), refined_pos_ECI(2,:), refined_pos_ECI(3,:), 'b');
+    legend('Earth', 'Reference trajectory', 'Initial orbit determination', 'Orbit refinement');
+    
+%     % plot along one dimension only
+%     figure;
+%     plot(t_24hr, pos_ECI(1,:));
+%     hold on;
+%     plot(t_24hr, initial_pos_ECI(1,:));
+%     plot(t_24hr, refined_pos_ECI(1,:));
+%     grid on;
+%     legend('Reference trajectory', 'Initial orbit determination', 'Orbit refinement');
     
 end

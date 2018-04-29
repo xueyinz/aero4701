@@ -163,11 +163,6 @@ uav.pos_ECEF_filtered(:, outliers) = NaN;
 uav.pos_ECEF_removed = uav.pos_ECEF;
 uav.pos_ECEF_removed(:, ~outliers) = NaN;
 
-% uav.pos_LLH_filtered = uav.pos_LLH;
-% uav.pos_LLH_filtered(:, outliers) = NaN;
-% uav.pos_LLH_removed = uav.pos_LLH;
-% uav.pos_LLH_removed(:, ~outliers) = NaN;
-
 uav.pos_LGCV_filtered = uav.pos_LGCV;
 uav.pos_LGCV_filtered(:, outliers) = NaN;
 uav.pos_LGCV_removed = uav.pos_LGCV;

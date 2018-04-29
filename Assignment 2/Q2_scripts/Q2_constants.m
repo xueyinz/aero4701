@@ -18,12 +18,14 @@ mu_Earth = 3.986005e14;             % Earth standard gravitational parameter [m3
 global E_threshold;
 E_threshold = 0.00001;              % error threshold when solving for eccentric anomaly
 
+sat.OrbitalParameters = 'Original'; % type of orbital parameters in struct
 sat.a = 26400e3;                    % satellite semimajor axis [m]
 sat.e = 0.001;                      % satellite eccentricity
 sat.i = deg2rad(55);                % satellite inclination angle [rad]
 sat.Omega = deg2rad(120);           % satellite right ascension of ascending node [rad]
 sat.w = 0;                          % satellite argument of perigee [rad]
 sat.M0 = 0;                         % satellite mean anomaly at epoch [rad]
+sat.t0 = 0;                         % satellite epoch time [s]
 sat.n = sqrt(mu_Earth/(sat.a^3));   % satellite mean motion [rad/s]
 sat.p = sat.a*(1 - (sat.e)^2);      % satellite semilatus rectum [m]
 

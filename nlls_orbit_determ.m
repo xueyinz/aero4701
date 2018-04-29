@@ -1,4 +1,4 @@
-function params = nlls_orbit_determ(obs, GS_LLH, init_posvel_guess, t_init_posvel)
+function params = nlls_orbit_determ(obs,GS_LLH,init_posvel_guess)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NLLS_ORBIT_DETERM - Uses Non-linear Least Squares technique to estimate
@@ -8,16 +8,15 @@ function params = nlls_orbit_determ(obs, GS_LLH, init_posvel_guess, t_init_posve
 % Inputs: obs - N x 4 vector of [time, range, azimuth, elevation] measurements
 %         from a single ground station
 %         GS_ECEF - ECEF position of the ground tracking station
-%         init_posvel_guess - Initial parameter estimate 
+%         init_posvel_guess - Initial parameter estimate
 %
 % Outputs: params - Orbital parameters: [a,e,i,RAAN,AoP,Mo (at epoch)]
 %
-
 % See Week 6 Slides 18 to 30 for Details on non-linear least squares for
 % orbit determination from ground station tracking measurements
 
 % FILL IN HERE
-time_last_vernal_equinox = t_init_posvel;
+time_last_vernal_equinox = obs(1,1);
 GS_ECEF = llh_geocentric2ecef(GS_LLH);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialise H matrix and error vector
@@ -33,7 +32,7 @@ delta_x = 10e9;
 
 % Main iteration loop to converge on initial satellite position and
 % velocity
-max_iter = 50;
+max_iter = 20;
 tol = 1e-6;
 iter = 0;
 while (norm(delta_x) > tol)
@@ -53,22 +52,22 @@ while (norm(delta_x) > tol)
         % Get the expected measurement (range, azimuth, elevation)
         % FILL IN HERE: expected measurement as a function of ground
         % station location, and satellite location
-        expected_obs = eci2ecef_vector(pos, current_obs_time);
-        expected_obs = ecef_ground2lgcv_vector_NLLS(expected_obs, GS_LLH, GS_ECEF);
-        expected_obs = cartesian2polar_vector(expected_obs);
+        pos_ECEF = eci2ecef_vector(pos, current_obs_time);
+        pos_LGCV = ecef_ground2lgcv_vector_NLLS(pos_ECEF, GS_ECEF);
+        expected_obs = cartesian2polar_vector(pos_LGCV);
         
         % Build H matrix
         dxdxo = universal_conic_section_jacobian(pos, vel, X(1:3), X(4:6), delta_t);
-        dhdx = rangeazielev_obs_jacob(GS_ECEF, GS_LLH, pos, delta_t);
+        dhdx = rangeazielev_obs_jacob(GS_ECEF, pos, delta_t);
         H((3*i - 2):3*i,:) = dhdx*dxdxo; % Builds the rows of the Jacobian matrix corresponding to this measurement
         
         % Build the residual vector for this measurement
         actual_obs = obs(i,2:4);
-        delta_y((3*i - 2):3*i,1) = actual_obs' - expected_obs;
+        delta_y((3*i - 2):3*i,1) = (actual_obs' - expected_obs);
         
     end
     
-    % Use non-linear least squares to estimate error in x
+%     % Use non-linear least squares to estimate error in x
 %     delta_x = inv(H'*H)*H'*delta_y;
     
     % Alternative formulation (much better, type "help mldivide" for
@@ -76,7 +75,7 @@ while (norm(delta_x) > tol)
     delta_x = (H'*H)\H'*delta_y;
     
     if isnan(delta_x)
-        break
+        continue
     end
     
     X = X + delta_x;
@@ -90,9 +89,17 @@ while (norm(delta_x) > tol)
     
 end
 
+params = ECI_posvel_to_Orbit(X);
+
 % FILL IN HERE: Transform iterated estimate of initial position and
 % velocity into orbital parameters (See Notes Week 6 Slide 30)
 
-params = posvel2orbital(X);
+% .......
 
 % end of nlls_orbit_determ
+
+
+
+
+
+

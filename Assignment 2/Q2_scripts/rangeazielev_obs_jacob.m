@@ -1,4 +1,4 @@
-function dhdx = rangeazielev_obs_jacob(GS_ECEF, sat_ECI, time_svep)
+function dhdx = rangeazielev_obs_jacob(GS_ECEF, GS_LLH, sat_ECI, time_svep)
 
 % RANGEAZIELEV_OBS_JACOB - computes the jacobian matrix for the function to
 % convert a sat and GS position and time into a range, azimuth and
@@ -19,12 +19,12 @@ function dhdx = rangeazielev_obs_jacob(GS_ECEF, sat_ECI, time_svep)
 % FILL IN HERE: Functions for computing "Ceci2ecef" (ECI to ECEF DCM),
 % function for computing "Clgcv2ecef" (LGCV to 
 
-Ceci2ecef = C_ECI_to_ECEF(time_svep);
+Ceci2ecef = C_eci2ecef(time_svep);
     
-Clgcv2ecef = C_LGCV_to_ECEF(GS_ECEF);
+Clgcv2ecef = C_lgcv2ecef(GS_LLH);
 
 % compute NED cartesian range vector
-satrelNED = Clgcv2ecef'*(Ceci2ecef*sat_ECI - GS_ECEF');
+satrelNED = Clgcv2ecef'*(Ceci2ecef*sat_ECI - GS_ECEF);
 dx = satrelNED(1);
 dy = satrelNED(2);
 dz = satrelNED(3);
@@ -52,5 +52,3 @@ Hc2p(3,1) = -dx*dz/(r2*rxy);	Hc2p(3,2) = -dy*dz/(r2*rxy); 	Hc2p(3,3) = rxy/r2;
 dhdx = [Hc2p*Clgcv2ecef'*Ceci2ecef, zeros(3)];
 
 % end of rangeazielev_obs_jacob
-
-
