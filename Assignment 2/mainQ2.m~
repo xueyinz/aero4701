@@ -67,7 +67,7 @@ t_first_estimate = t_first_estimate(:,2);
 % prepare input variables for nlls_orbit_determ script
 observations = [t_visible(~isnan(t_visible)); visible_POLAR_noisy(:, ~isnan(t_visible))]';
 ground_ECEF = llh_geocentric2ecef(ground_LLH);
-refined_estimate = nlls_orbit_determ(observations,ground_LLH,first_estimate);
+refined_estimate = nlls_orbit_determ(observations,ground_ECEF,first_estimate);
 
 %% simulate results
 

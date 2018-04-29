@@ -19,12 +19,12 @@ function dhdx = rangeazielev_obs_jacob(GS_ECEF, sat_ECI, time_svep)
 % FILL IN HERE: Functions for computing "Ceci2ecef" (ECI to ECEF DCM),
 % function for computing "Clgcv2ecef" (LGCV to 
 
-Ceci2ecef = ... 
+Ceci2ecef = C_ECI_to_ECEF(time_svep);
     
-Clgcv2ecef = ...
+Clgcv2ecef = C_LGCV_to_ECEF(GS_ECEF);
 
 % compute NED cartesian range vector
-satrelNED = Clgcv2ecef'*(Ceci2ecef*sat_ECI - GS_ECEF);
+satrelNED = Clgcv2ecef'*(Ceci2ecef*sat_ECI - GS_ECEF');
 dx = satrelNED(1);
 dy = satrelNED(2);
 dz = satrelNED(3);
@@ -49,7 +49,7 @@ Hc2p(2,1) = -dy/rxy2;   		Hc2p(2,2) = dx/rxy2;    		Hc2p(2,3) = 0;
 Hc2p(3,1) = -dx*dz/(r2*rxy);	Hc2p(3,2) = -dy*dz/(r2*rxy); 	Hc2p(3,3) = rxy/r2;
 
 % dhdx
-dhdx = [Hc2p*CClgcv2ecef'*Ceci2ecef, zeros(3)];
+dhdx = [Hc2p*Clgcv2ecef'*Ceci2ecef, zeros(3)];
 
 % end of rangeazielev_obs_jacob
 

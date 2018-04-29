@@ -9,21 +9,27 @@
 %
 % inputs:   pos_ECI = [x; y; z] = satellite position measurements in ECI frame [m; m; m]
 %           t = time vector corresponding to pos_ECI
-% outputs:  v_estimates = array velocity estimates in ECI frame [m; m; m]
+% outputs:  v_estimates = array estimates in ECI frame [m; m; m; m/s; m/s; m/s]
 %                       = there are two less estimates than there are measurements
+%                       = there are 3 rows for position, 3 rows for velocity
 
-function v_estimates = herrick_gibbs(pos_ECI, t)
+function initial_estimates = herrick_gibbs(pos_ECI, t)
 
     global mu_Earth
 
-    n_estimates = size(pos_ECI,2) - 2;      % subtract 2 because the first and last measurements don't have velocity estimates
-    v_estimates = zeros(3, n_estimates);    % array of estimate results
+    n_estimates = size(pos_ECI,2) - 2;          % subtract 2 because the first and last measurements don't have velocity estimates
+    initial_estimates = NaN(6, n_estimates);    % array of estimate results
     
     g = zeros(1,3);
     h = zeros(1,3);
-    d = zeros(1,3);
     h_gain = mu_Earth/12;
     for ii = 1:n_estimates
+        
+        r = pos_ECI(:, ii:ii+2);            % 3x3 matrix
+        if sum(isnan(t(ii:ii+2))) > 0
+            continue
+        end
+        r_norm = rssq(r, 1);                % 1x3 matrix        
         
         t_12 = t(ii+1) - t(ii);
         t_13 = t(ii+2) - t(ii);
@@ -37,13 +43,10 @@ function v_estimates = herrick_gibbs(pos_ECI, t)
         h(3) = t_12;
         h(2) = h(1) - h(3);
         
-        r = pos_ECI(:, ii:ii+2);            % 3x3 matrix
-        r_norm = rssq(r, 1);                % 1x3 matrix
-        
         d = g + h*h_gain./(r_norm.^3);
         d(1) = -d(1);
 
-        v_estimates(:,ii) = sum(repmat(d,3,1).*r, 2);
+        initial_estimates(:,ii+1) = [r(:,2); sum(repmat(d,3,1).*r, 2)];
         
     end
 

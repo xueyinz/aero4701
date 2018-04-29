@@ -1,8 +1,8 @@
 function [Position_ECI, Velocity_ECI] = universal_conic_section_orbit(t,init_pos,init_vel)
 
-% UNIVERSAL_CONIC_SECTION_ORBIT - determins the position and velocity of a
+% UNIVERSAL_CONIC_SECTION_ORBIT - determines the position and velocity of a
 % satellite given the orbital parameters and an input time using a
-% universal coniv section solution to kepler's equations (from initial
+% universal conic section solution to Kepler's equations (from initial
 % position and velocity)
 %
 % Inputs: t - time since epoch in seconds

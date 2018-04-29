@@ -16,16 +16,16 @@
 % outputs:  pos_ECI = satellite position coordinates in ECI frame
 %                       (3xN matrix where N is the number of time-steps)
 
-function pos_ECI = orbit2ECI(satellit, t_since_epoch)
+function pos_ECI = orbit2ECI(satellite, t_since_epoch)
 
     % for code readability
-    e = satellit.e;
-    i = satellit.i;
-    Omega = satellit.Omega;
-    w = satellit.w;
-    M0 = satellit.M0;
-    p = satellit.p;
-    n = satellit.n;
+    e = satellite.e;
+    i = satellite.i;
+    Omega = satellite.Omega;
+    w = satellite.w;
+    M0 = satellite.M0;
+    p = satellite.p;
+    n = satellite.n;
     
     % mean anomaly
     M = M0 + n.*(t_since_epoch);

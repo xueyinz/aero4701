@@ -1,4 +1,4 @@
-function params = nlls_orbit_determ(obs,GS_ECEF,init_posvel_guess)
+function params = nlls_orbit_determ(obs,GS_LLH,init_posvel_guess)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NLLS_ORBIT_DETERM - Uses Non-linear Least Squares technique to estimate
@@ -8,7 +8,7 @@ function params = nlls_orbit_determ(obs,GS_ECEF,init_posvel_guess)
 % Inputs: obs - N x 4 vector of [time, range, azimuth, elevation] measurements
 %         from a single ground station
 %         GS_ECEF - ECEF position of the ground tracking station
-%         init_posvel_guess - Initial parameter estimate 
+%         init_posvel_guess - Initial parameter estimate
 %
 % Outputs: params - Orbital parameters: [a,e,i,RAAN,AoP,Mo (at epoch)]
 %
@@ -16,8 +16,8 @@ function params = nlls_orbit_determ(obs,GS_ECEF,init_posvel_guess)
 % orbit determination from ground station tracking measurements
 
 % FILL IN HERE
-time_last_vernal_equinox = 0;
-
+time_last_vernal_equinox = obs(1,1);
+GS_ECEF = llh_geocentric2ecef(GS_LLH);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialise H matrix and error vector
 
@@ -46,21 +46,24 @@ while (norm(delta_x) > tol)
         % Use current value of predicted initial position to calculate
         % position at time of observation
         current_obs_time = obs(i,1);
-        [pos, vel] = universal_conic_section_orbit(current_obs_time - time_last_vernal_equinox, X(1:3), X(4:6));
+        delta_t = current_obs_time - time_last_vernal_equinox;
+        [pos, vel] = universal_conic_section_orbit(delta_t, X(1:3), X(4:6));
         
         % Get the expected measurement (range, azimuth, elevation)
         % FILL IN HERE: expected measurement as a function of ground
         % station location, and satellite location
-        expected_obs = ...
+        pos_ECEF = eci2ecef_vector(pos, current_obs_time);
+        pos_LGCV = ecef_ground2lgcv_vector_NLLS(pos_ECEF, GS_ECEF);
+        expected_obs = cartesian2polar_vector(pos_LGCV);
         
         % Build H matrix
-        dxdxo = universal_conic_section_jacobian(pos, vel, X(1:3), X(4:6), current_obs_time - time_last_vernal_equinox);
-        dhdx = rangeazielev_obs_jacob(GS_ECEF, pos, current_obs_time - time_last_vernal_equinox);
+        dxdxo = universal_conic_section_jacobian(pos, vel, X(1:3), X(4:6), delta_t);
+        dhdx = rangeazielev_obs_jacob(GS_ECEF, pos, delta_t);
         H((3*i - 2):3*i,:) = dhdx*dxdxo; % Builds the rows of the Jacobian matrix corresponding to this measurement
         
         % Build the residual vector for this measurement
         actual_obs = obs(i,2:4);
-        delta_y((3*i - 2):3*i,1) = (actual_obs - expected_obs)';
+        delta_y((3*i - 2):3*i,1) = (actual_obs' - expected_obs);
         
     end
     
@@ -70,6 +73,10 @@ while (norm(delta_x) > tol)
     % Alternative formulation (much better, type "help mldivide" for
     % details)
     delta_x = (H'*H)\H'*delta_y;
+    
+    if isnan(delta_x)
+        continue
+    end
     
     X = X + delta_x;
     
@@ -81,6 +88,8 @@ while (norm(delta_x) > tol)
     end
     
 end
+
+params = ECI_posvel_to_Orbit(X);
 
 % FILL IN HERE: Transform iterated estimate of initial position and
 % velocity into orbital parameters (See Notes Week 6 Slide 30)
