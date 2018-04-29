@@ -33,7 +33,7 @@ delta_x = 10e9;
 
 % Main iteration loop to converge on initial satellite position and
 % velocity
-max_iter = 50;
+max_iter = 200;
 tol = 1e-6;
 iter = 0;
 while (norm(delta_x) > tol)
