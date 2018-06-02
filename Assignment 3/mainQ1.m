@@ -19,23 +19,88 @@ constants;
 I.xx = m*(a^2 + b^2)/12;
 I.yy = m*(a^2 + c^2)/12;
 I.zz = m*(b^2 + c^2)/12;
-% I = [I_xx 0 0; 0 I_yy 0; 0 0 I_zz];
 
-%% (b) inertial angular momentum vector
+%% (b) inertial angular momentum magnitude
 
-L.x = I.xx*w.x;
-L.y = I.yy*w.y;
-L.z = I.zz*w.z;
-L.total = norm([L.x L.y L.z]);
+L.x_initial = I.xx * w.x_initial;
+L.y_initial = I.yy * w.y_initial;
+L.z_initial = I.zz * w.z_initial;
+L.total_initial = norm([L.x_initial, L.y_initial, L.z_initial]);
 
-%% 
+%% (c) maximum angular velocity
+
+% faster to operate on a pre-allocated array
+% initialise the first time step
+t = 1;
+
+% angular velocity
+w.x(t) = w.x_initial;
+w.y(t) = w.y_initial;
+w.z(t) = w.z_initial;
+
+% constant coefficients for change in angular velocity
+coeff.x = (I.yy - I.zz)/I.xx;
+coeff.y = (I.zz - I.xx)/I.yy;
+coeff.z = (I.xx - I.yy)/I.zz;
+
+% angular velocity
+wdot.x(t) = coeff.x * w.y(t) * w.z(t);
+wdot.y(t) = coeff.y * w.z(t) * w.x(t);
+wdot.z(t) = coeff.z * w.x(t) * w.y(t);
+
+% angular momentum
+L.x(t) = L.x_initial;
+L.y(t) = L.y_initial;
+L.z(t) = L.z_initial;
+L.total(t) = L.total_initial;
+
+% calculate angular velocity and angular momentum at each time step,
+% skipping the first time step
+for t = 2:num_steps
+    
+    % get new angular velocity
+    w.x(t) = w.x(t-1) + wdot.x(t-1) * dt;
+    w.y(t) = w.y(t-1) + wdot.y(t-1) * dt;
+    w.z(t) = w.z(t-1) + wdot.z(t-1) * dt;
+    
+    % get new change in angular velocity
+    wdot.x(t) = coeff.x * w.y(t) * w.z(t);
+    wdot.y(t) = coeff.y * w.z(t) * w.x(t);
+    wdot.z(t) = coeff.z * w.x(t) * w.y(t);
+    
+    % get new angular momentum
+    L.x(t) = I.xx * w.x(t);
+    L.y(t) = I.yy * w.y(t);
+    L.z(t) = I.zz * w.z(t);
+    L.total(t) = norm([L.x(t), L.y(t), L.z(t)]);
+    
+end
+
+% maximum angular velocity
+w.x_max = max(w.x);
+w.y_max = max(w.y);
+w.z_max = max(w.z);
+
+%% rotational kinetic energy
+
+E.xx = (1/2) * I.xx * w.x.^2;
+E.yy = (1/2) * I.yy * w.y.^2;
+E.zz = (1/2) * I.zz * w.z.^2;
 
 %% results
 
 fprintf('1. (a)\n');
-fprintf('\tI_xx = %f\n', I.xx);
-fprintf('\tI_yy = %f\n', I.yy);
-fprintf('\tI_zz = %f\n', I.zz);
+fprintf('\tI_xx = %f kg.m^2\n', I.xx);
+fprintf('\tI_yy = %f kg.m^2\n', I.yy);
+fprintf('\tI_zz = %f kg.m^2\n', I.zz);
 
 fprintf('1. (b)\n');
-fprintf('\tL_total = %f\n', L.total);
+fprintf('\tL_total = %f kg.m^2/s\n', L.total_initial);
+
+fprintf('1. (c)\n');
+fprintf('\tmax(w_x) = %f rad/s\n', w.x_max);
+fprintf('\tmax(w_y) = %f rad/s\n', w.y_max);
+fprintf('\tmax(w_z) = %f rad/s\n', w.z_max);
+
+fprintf('1. (d)\n');
+fprintf('\tmax(w_x) = %f rad/s\n', w.x_max);
