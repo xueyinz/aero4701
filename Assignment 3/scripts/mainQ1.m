@@ -109,37 +109,37 @@ E.total = E.xx + E.yy + E.zz;
 %% Question 2
 
 % corners of the rectangle
-shape.XYZ = NaN(3, num_steps);
-shape.XYZ = NaN(3, num_steps);
-shape.XYz = NaN(3, num_steps);
-shape.XyZ = NaN(3, num_steps);
-shape.Xyz = NaN(3, num_steps);
-shape.xYZ = NaN(3, num_steps);
-shape.xYz = NaN(3, num_steps);
-shape.xyZ = NaN(3, num_steps);
-shape.xyz = NaN(3, num_steps);
-XYZ = [shape.a/2, shape.b/2, shape.c/2];
-XYz = [shape.a/2, shape.b/2, -shape.c/2];
-XyZ = [shape.a/2, -shape.b/2, shape.c/2];
-Xyz = [shape.a/2, -shape.b/2, -shape.c/2];
-xYZ = [-shape.a/2, shape.b/2, shape.c/2];
-xYz = [-shape.a/2, shape.b/2, -shape.c/2];
-xyZ = [-shape.a/2, -shape.b/2, shape.c/2];
-xyz = [-shape.a/2, -shape.b/2, -shape.c/2];
+shape.XYZ = NaN(num_steps, 3);
+shape.XYZ = NaN(num_steps, 3);
+shape.XYz = NaN(num_steps, 3);
+shape.XyZ = NaN(num_steps, 3);
+shape.Xyz = NaN(num_steps, 3);
+shape.xYZ = NaN(num_steps, 3);
+shape.xYz = NaN(num_steps, 3);
+shape.xyZ = NaN(num_steps, 3);
+shape.xyz = NaN(num_steps, 3);
+XYZ = [shape.c/2, shape.b/2, shape.a/2];
+XYz = [shape.c/2, shape.b/2, -shape.a/2];
+XyZ = [shape.c/2, -shape.b/2, shape.a/2];
+Xyz = [shape.c/2, -shape.b/2, -shape.a/2];
+xYZ = [-shape.c/2, shape.b/2, shape.a/2];
+xYz = [-shape.c/2, shape.b/2, -shape.a/2];
+xyZ = [-shape.c/2, -shape.b/2, shape.a/2];
+xyz = [-shape.c/2, -shape.b/2, -shape.a/2];
 
 % rotation matrix to transform body frame into intertial frame
 rotation_matrix = get_rotation_matrix(body_angles.psi, body_angles.theta, body_angles.phi);
 
 % get the corner values at each time step
-for step = 1:num_steps
-    shape.XYZ(:, step) = XYZ * rotation_matrix(:,:,step);
-    shape.XYz(:, step) = XYz * rotation_matrix(:,:,step);
-    shape.XyZ(:, step) = XyZ * rotation_matrix(:,:,step);
-    shape.Xyz(:, step) = Xyz * rotation_matrix(:,:,step);
-    shape.xYZ(:, step) = xYZ * rotation_matrix(:,:,step);
-    shape.xYz(:, step) = xYz * rotation_matrix(:,:,step);
-    shape.xyZ(:, step) = xyZ * rotation_matrix(:,:,step);
-    shape.xyz(:, step) = xyz * rotation_matrix(:,:,step);
+for t = 1:num_steps
+    shape.XYZ(t, :) = XYZ * rotation_matrix(:, :, t);
+    shape.XYz(t, :) = XYz * rotation_matrix(:, :, t);
+    shape.XyZ(t, :) = XyZ * rotation_matrix(:, :, t);
+    shape.Xyz(t, :) = Xyz * rotation_matrix(:, :, t);
+    shape.xYZ(t, :) = xYZ * rotation_matrix(:, :, t);
+    shape.xYz(t, :) = xYz * rotation_matrix(:, :, t);
+    shape.xyZ(t, :) = xyZ * rotation_matrix(:, :, t);
+    shape.xyz(t, :) = xyz * rotation_matrix(:, :, t);
 end
 
 %% results
@@ -162,6 +162,16 @@ fprintf('\tmax(w_x) = %f rad/s\n', w.x_max);
 
 %% plotting
 
+% angular velocity
+figure;
+plot(t_vector, w.x);
+hold on;
+grid on;
+plot(t_vector, w.y);
+plot(t_vector, w.z);
+title('Angular velocity');
+
+% angular momentum
 figure;
 plot(t_vector, L.x);
 hold on;
@@ -171,6 +181,7 @@ plot(t_vector, L.z);
 plot(t_vector, L.total);
 title('Angular momentum');
 
+% energy
 figure;
 plot(t_vector, E.xx);
 hold on;
@@ -180,11 +191,22 @@ plot(t_vector, E.zz);
 plot(t_vector, E.total);
 title('Energy');
 
+% body frame
+faces = [1 2 4 3; 1 3 7 5; 5 6 8 7; 2 4 8 6];
+vertices = [XYZ; XYz; XyZ; Xyz; xYZ; xYz; xyZ; xyz];
+limits = 0.6*max([shape.a shape.b shape.c]);
+
 figure;
-plot(t_vector, w.x);
-hold on;
+rectangular_prism = patch('Faces', faces, 'Vertices', vertices, 'FaceAlpha', 0);
+view(3);
+axis equal;
 grid on;
-plot(t_vector, w.y);
-plot(t_vector, w.z);
-title('Angular velocity');
+xlim([-limits limits]);
+ylim([-limits limits]);
+zlim([-limits limits]);
+
+for t = 2:animate_speed:num_steps
+    rectangular_prism.Vertices = [shape.XYZ(t,:); shape.XYz(t,:); shape.XyZ(t,:); shape.Xyz(t,:); shape.xYZ(t,:); shape.xYz(t,:); shape.xyZ(t,:); shape.xyz(t,:)];
+    drawnow;
+end
 
