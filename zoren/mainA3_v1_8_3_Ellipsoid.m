@@ -121,7 +121,7 @@ switch axis_type
 end
 
 time = 60;
-dt = 0.01;
+dt = 0.001;
 tvec = (dt:dt:time)';
 
 ang_x = 0;
@@ -132,7 +132,7 @@ counter = 0;
 
 for n = 1:length(tvec)
     
-    n
+%     n
     
     omega_x_dot = (Iyy-Izz)*omega_y*omega_z/Ixx;
     omega_y_dot = (Izz-Ixx)*omega_z*omega_x/Iyy;
@@ -164,7 +164,7 @@ for n = 1:length(tvec)
     L(n, 2) = omega_y*Iyy;
     L(n, 3) = omega_z*Izz;
     
-    Lsum(n) = sum(L(n,:));
+    Lsum(n) = norm(L(n,:));
     
     aElips2 = sum(L(n, :))^2/Ixx^2;
     bElips2 = sum(L(n, :))^2/Iyy^2;
@@ -248,6 +248,10 @@ plot(tvec, angDB(:, 1), tvec, angDB(:, 2), tvec, angDB(:, 3),...
 xlabel('Time (s)'); ylabel('Angle (rad)');
 legend('ang_x', 'ang_y', 'ang_z')
 grid on
+figure;
+plot(tvec, L(:, 1), tvec, L(:, 2), tvec, L(:, 3), tvec, Lsum, ...
+    'LineWidth', 1.5)
+grid on;
 
 
 
