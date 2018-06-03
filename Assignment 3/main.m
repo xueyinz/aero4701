@@ -6,23 +6,34 @@
 
 clearvars;
 close all;
-Q1 = true;
-Q2 = true;
-Q3 = false;
 
 %% initialisation
 
 addpath('./scripts/');
 
-constants;
+default_constants;
 
-if Q1
-    mainQ1;
-%     if Q2
-%         rotation_matrix = get_rotation_maxtrix
-%     end
-end
+%% Question 1
 
-if Q3
-    mainQ3;
-end
+question = 1;
+Q1_calculations;
+
+%% Question 2
+
+question = 2;
+Q1_calculations;
+Q2_animate;
+
+% y-axis
+w.x_initial = 0.08;             % initial x angular velocity [rad/s]
+w.y_initial = pi/2;             % initial y angular velocity [rad/s]
+w.z_initial = 0.1;              % initial z angular velocity [rad/s]
+Q1_calculations;
+Q2_animate;
+
+% z-axis
+w.x_initial = pi/2;             % initial x angular velocity [rad/s]
+w.y_initial = 0.06;             % initial y angular velocity [rad/s]
+w.z_initial = 0.08;             % initial z angular velocity [rad/s]
+Q1_calculations;
+Q2_animate;
