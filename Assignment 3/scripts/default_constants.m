@@ -28,5 +28,5 @@ w.z_initial = pi/2;             % initial z angular velocity [rad/s]
 wire.l = 17.7;                  % length [cm]
 wire.d = 0.1;                   % diameter [cm]
 wire.temp = 0;                  % temperature [celsius]
-
-
+wire.c = 0.385;                 % specific heat [J/g]
+wire.density = 9;               % density [g/cm^3]

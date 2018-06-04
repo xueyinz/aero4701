@@ -105,8 +105,23 @@ if question == 1
 
     %% (e) copper wire temperature
 
+    % angular momentum is conserved for the system
+    w.final = L.total_initial/max([I.xx I.yy I.zz]);
+    
+    % rotational kinetic energy in the final stable state
+    E.minimum = (1/2) * (max([I.xx I.yy I.zz]) * w.final^2);
     % E.minimum = (1/2) * L.total_initial^2 / min([I.xx, I.yy, I.zz]);
-    % E.diff = E.total(1) - E.minimum;
+    
+    % loss in rotational kinetic energy
+    E.loss = E.total(1) - E.minimum;
+    
+    % wire properties
+    wire.volume = pi * (wire.d/2)^2 * wire.l;
+    wire.mass = wire.density * wire.volume;             % [g]
+    
+    % change in thermal energy for the wire
+    wire.delta_temp = E.loss / (wire.mass * wire.c);
+%     wire.final_temp = wire.temp + wire.delta_temp;
 
     %% results
 
@@ -125,5 +140,8 @@ if question == 1
 
     fprintf('1. (d)\n');
     fprintf('\tE_rotational = %f J\n', E.total(1));
+
+    fprintf('1. (e)\n');
+    fprintf('\tChange in temperature of wire = %f celsius\n', wire.delta_temp);
     
 end
