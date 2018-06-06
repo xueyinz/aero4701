@@ -15,24 +15,21 @@ close all;
 
 addpath('./scripts/', './functions/');
 
+% ask for user input to determine which constants file to load
 constants_type = '';
-
 while isempty(constants_type)
     
-    constants_type = input('Enter ''d'' for default connstants, ''u'' for user constants: ', 's');
+    constants_type = input('Enter ''d'' for default constants, ''u'' for user constants: ', 's');
     
-    
+    % check user input
     if isempty(constants_type)
         fprintf('Invalid input\n');
     elseif ((constants_type == 'd') || (constants_type == 'D'))
-        fprintf('\nUsing default constants from assignment sheet\n\n');
+        constants_type = 'd';
+        fprintf('\nUsing default constants from assignment sheet...\n\n');
         default_constants;
-        Q1_calculations;
-        Q1_answers;
-        Q2_animate;
-        Q3_polhode;
     elseif ((constants_type == 'u') || (constants_type == 'U'))
-        fprintf('\nUsing the user constants defined in <user_constants.m>\n\n');
+        fprintf('\nUsing the user constants defined in <user_constants.m>...\n\n');
         user_constants;        
     else
         constants_type = '';
@@ -40,3 +37,22 @@ while isempty(constants_type)
     end
     
 end
+
+%% run simulation scripts
+
+% analyse rotational states
+Q1_calculations;
+
+% print answers if using default assignment constants
+if constants_type == 'd'
+    Q1_answers;
+end
+
+% prepare animation of rectangular prism in inertial frame
+Q2_animate;
+
+% prepare polhode data
+Q3_polhode;
+
+% let the simulation run!
+% plot_everything;

@@ -20,9 +20,9 @@ shape.c = 0.11;                 % width c [m]
 
 shape.m = 1;                    % mass [kg]
 
-w.x_initial = 0.12;             % initial x angular velocity [rad/s]
-w.y_initial = 0.23;             % initial y angular velocity [rad/s]
-w.z_initial = pi/2;             % initial z angular velocity [rad/s]
+w_initial.x = 0.12;             % initial x angular velocity [rad/s]
+w_initial.y = 0.23;             % initial y angular velocity [rad/s]
+w_initial.z = pi/2;             % initial z angular velocity [rad/s]
 
 %% flexible copper wire parameters
 

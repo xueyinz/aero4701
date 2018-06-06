@@ -2,35 +2,41 @@
 % AERO4701
 % Assignment 3
 %
-% Q3_polhode.m
+% Q3_polhode.
 
-%% define the two ellipsoids
+%% pre-allocate memory for arrays and structs
 
-% get the semi-axis lengths for each ellipsoid
-energy_ellipsoid = get_energy_ellipsoid(E.total(1), I);
-momentum_ellipsoid = get_momentum_ellipsoid(L.total(1), I);
+% mesh size for the ellipsoid surf
+global surf_size;
 
-% get limits for plotting
-limits = 1.1 * max([energy_ellipsoid.a, energy_ellipsoid.b, energy_ellipsoid.c ...
-    momentum_ellipsoid.a, momentum_ellipsoid.b, momentum_ellipsoid.c]);
+% energy ellipsoid parameters
+energy_ellipsoid.a = NaN;
+energy_ellipsoid.b = NaN;
+energy_ellipsoid.c = NaN;
+energy_ellipsoid.x = NaN(surf_size + 1, surf_size + 1);
+energy_ellipsoid.y = NaN(surf_size + 1, surf_size + 1);
+energy_ellipsoid.z = NaN(surf_size + 1, surf_size + 1);
+energy_ellipsoid = repmat(energy_ellipsoid, 1, 3);
 
-figure;
-p_energy = surf(energy_ellipsoid.x, energy_ellipsoid.y, energy_ellipsoid.z, 'EdgeColor', 'none', 'FaceAlpha', face_alpha, 'FaceColor', 'r');
-hold on;
-grid on;
-axis equal;
-xlim([-limits, limits]);
-ylim([-limits, limits]);
-zlim([-limits, limits]);
-p_momentum = surf(momentum_ellipsoid.x, momentum_ellipsoid.y, momentum_ellipsoid.z, 'EdgeColor', 'none', 'FaceAlpha', face_alpha, 'FaceColor', 'b');
-p_w = plot3(w.x, w.y, w.z, 'k', 'LineWidth', line_width);
-plot3(-w.x, w.y, w.z, 'k', 'LineWidth', line_width);
-plot3(w.x, -w.y, w.z, 'k', 'LineWidth', line_width);
-plot3(w.x, w.y, -w.z, 'k', 'LineWidth', line_width);
-p_w_point = scatter3(w.x(1), w.y(2), w.z(3), 20*line_width, 'y', 'filled');
-for t = 2:animate_speed:num_steps
-    p_w_point.XData = w.x(t);
-    p_w_point.YData = w.y(t);
-    p_w_point.ZData = w.z(t);
-    drawnow;
+momentum_ellipsoid.a = NaN;
+momentum_ellipsoid.b = NaN;
+momentum_ellipsoid.c = NaN;
+momentum_ellipsoid.x = NaN(surf_size + 1, surf_size + 1);
+momentum_ellipsoid.y = NaN(surf_size + 1, surf_size + 1);
+momentum_ellipsoid.z = NaN(surf_size + 1, surf_size + 1);
+momentum_ellipsoid = repmat(momentum_ellipsoid, 1, 3);
+
+%% loop three times for rotation about the three axes
+
+for ii = 1:3
+    
+    % get the semi-axis lengths for each ellipsoid
+    energy_ellipsoid(ii) = get_energy_ellipsoid(E(ii).total(1), I);
+    momentum_ellipsoid(ii) = get_momentum_ellipsoid(L(ii).total(1), I);
+    
+%     % get limits for plotting
+%     ellipsoid_limits = 1.1 * max([energy_ellipsoid(ii).a, energy_ellipsoid(ii).b, energy_ellipsoid(ii).c ...
+%         momentum_ellipsoid(ii).a, momentum_ellipsoid(ii).b, momentum_ellipsoid(ii).c]);
+    
 end
+

@@ -4,18 +4,18 @@
 %
 % get_momentum_ellipsoid.m
 
-function ellipsoid_surf = get_momentum_ellipsoid(L_total, I)
+function momentum_ellipsoid = get_momentum_ellipsoid(L_total, I)
 
     % mesh size for the ellipsoid surf
     global surf_size;
 
     % semi-axis lengths
-    ellipsoid_surf.a = L_total ./ I.xx;
-    ellipsoid_surf.b = L_total ./ I.yy;
-    ellipsoid_surf.c = L_total ./ I.zz;
+    momentum_ellipsoid.a = L_total ./ I.xx;
+    momentum_ellipsoid.b = L_total ./ I.yy;
+    momentum_ellipsoid.c = L_total ./ I.zz;
     
     % ellipsoid surface
-    [ellipsoid_surf.x, ellipsoid_surf.y, ellipsoid_surf.z] = ...
-        ellipsoid(0, 0, 0, ellipsoid_surf.a, ellipsoid_surf.b, ellipsoid_surf.c, surf_size);
+    [momentum_ellipsoid.x, momentum_ellipsoid.y, momentum_ellipsoid.z] = ...
+        ellipsoid(0, 0, 0, momentum_ellipsoid.a, momentum_ellipsoid.b, momentum_ellipsoid.c, surf_size);
 
 end
