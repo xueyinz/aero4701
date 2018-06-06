@@ -37,5 +37,5 @@ wire.density = 9;               % density [g/cm^3]
 global surf_size;
 surf_size = 49;                 % surf mesh size for the ellipsoids
 
-face_alpha = 0.9;               % transparency for the ellipsoids
+face_alpha = 0.5;               % transparency for the ellipsoids
 line_width = 1.5;               % angular velocity vector line widths

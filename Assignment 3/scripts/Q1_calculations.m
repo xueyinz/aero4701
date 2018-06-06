@@ -69,11 +69,12 @@ body_angles = repmat(body_angles, 1, 3);
 
 %% loop three times for rotation about the three axes
 
-t = 1;                          % first time step
 for ii = 1:3
 
+    % first time step
+    t = 1;
+    
     % angular momentum
-
     L(ii).x(t) = I.xx * w_initial.x;
     L(ii).y(t) = I.yy * w_initial.y;
     L(ii).z(t) = I.zz * w_initial.z;

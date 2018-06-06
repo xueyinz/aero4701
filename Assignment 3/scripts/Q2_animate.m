@@ -19,7 +19,9 @@ shape_sim.xyz = NaN(num_steps, 3);
 shape_sim = repmat(shape_sim, 1, 3);
 
 % dominant rotation axis
-dominant_rotation = ["", "", ""];
+dominant_rotation.I = '';
+dominant_rotation.axis = '';
+dominant_rotation = repmat(dominant_rotation, 1, 3);
 
 %% loop three times for rotation about the three axes
 
