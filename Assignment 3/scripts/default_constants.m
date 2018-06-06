@@ -10,7 +10,7 @@
 
 t_end = 60;                     % total simulation time [s]
 dt = 0.001;                     % time step [s]
-animate_speed = 50;             % speed multiplier for animation
+animate_speed = 100;             % speed multiplier for animation
 
 %% rectangular prism parameters
 
@@ -20,8 +20,8 @@ shape.c = 0.11;                 % width c [m]
 
 shape.m = 1;                    % mass [kg]
 
-w_initial.x = 0.12;             % initial x angular velocity [rad/s]
-w_initial.y = 0.23;             % initial y angular velocity [rad/s]
+w_initial.x = 0.06;             % initial x angular velocity [rad/s]
+w_initial.y = 0.08;             % initial y angular velocity [rad/s]
 w_initial.z = pi/2;             % initial z angular velocity [rad/s]
 
 %% flexible copper wire parameters
@@ -37,5 +37,5 @@ wire.density = 9;               % density [g/cm^3]
 global surf_size;
 surf_size = 49;                 % surf mesh size for the ellipsoids
 
-face_alpha = 0.5;               % transparency for the ellipsoids
+face_alpha = 0.4;               % transparency for the ellipsoids
 line_width = 1.5;               % angular velocity vector line widths

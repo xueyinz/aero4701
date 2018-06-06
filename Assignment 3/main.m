@@ -54,7 +54,5 @@ Q2_animate;
 % prepare polhode data
 Q3_polhode;
 
-save('data');
-
 % let the simulation run!
-% plot_everything;
+plot_everything;

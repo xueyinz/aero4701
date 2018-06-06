@@ -9,19 +9,6 @@
 t_vector = 0:dt:t_end;          % time vector [s]
 num_steps = length(t_vector);   % number of time steps
 
-% initial corner positions and geometry of the rectangular prism (before rotation)
-shape.XYZ = [shape.c/2, shape.b/2, shape.a/2];
-shape.XYz = [shape.c/2, shape.b/2, -shape.a/2];
-shape.XyZ = [shape.c/2, -shape.b/2, shape.a/2];
-shape.Xyz = [shape.c/2, -shape.b/2, -shape.a/2];
-shape.xYZ = [-shape.c/2, shape.b/2, shape.a/2];
-shape.xYz = [-shape.c/2, shape.b/2, -shape.a/2];
-shape.xyZ = [-shape.c/2, -shape.b/2, shape.a/2];
-shape.xyz = [-shape.c/2, -shape.b/2, -shape.a/2];
-shape.faces = [1 2 4 3; 1 3 7 5; 5 6 8 7; 2 4 8 6];
-shape.vertices = [shape.XYZ; shape.XYz; shape.XyZ; shape.Xyz; shape.xYZ; shape.xYz; shape.xyZ; shape.xyz];
-shape.prism_limits = 0.6*max([shape.a shape.b shape.c]);
-
 % moments of inertia
 I.xx = shape.m*(shape.a^2 + shape.b^2)/12;
 I.yy = shape.m*(shape.a^2 + shape.c^2)/12;

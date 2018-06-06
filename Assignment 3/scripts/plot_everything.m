@@ -4,7 +4,6 @@
 %
 % plot_everything.m
 
-close all;
 plot_id = 1;
 
 %% plotting angular velocity
@@ -27,6 +26,7 @@ for ii = 1:3
     legend('\omega_x', '\omega_y', '\omega_z', 'Location', 'eastoutside');
 
 end
+saveas(gcf, 'angular_velocity.png');
 
 %% plotting angular momentum
 
@@ -49,6 +49,7 @@ for ii = 1:3
     legend('L_x', 'L_y', 'L_z', 'L_total', 'Location', 'eastoutside');
 
 end
+saveas(gcf, 'angular_momentum.png');
 
 %% plotting rotational kinetic energy
 
@@ -71,48 +72,90 @@ for ii = 1:3
     legend('E_x', 'E_y', 'E_z', 'E_total', 'Location', 'eastoutside');
     
 end
+saveas(gcf, 'kinetic_energy.png');
 
-% %% prism rotating in the inertial frame
-% 
-% figure;
-% rectangular_prism = patch('Faces', faces, 'Vertices', vertices, 'FaceAlpha', 0);
-% view(3);
-% axis equal;
-% grid on;
-% xlim([-prism_limits prism_limits]);
-% ylim([-prism_limits prism_limits]);
-% zlim([-prism_limits prism_limits]);
-% title_string = sprintf('Dominant rotation about %s (inertial frame)(t = %.2f)', dominant_rotation, 0);
-% plot_title = title(title_string);
-% 
-% for t = 2:animate_speed:num_steps
-%     rectangular_prism.Vertices = [shape.XYZ(t,:); shape.XYz(t,:); shape.XyZ(t,:); shape.Xyz(t,:); shape.xYZ(t,:); shape.xYz(t,:); shape.xyZ(t,:); shape.xyz(t,:)];
-%     title_string = sprintf('Dominant rotation about %s (inertial frame)(t = %.2f)', dominant_rotation, t_vector(t));
-%     plot_title.String = title_string;
-%     drawnow;
-% end
-% 
-% %% Poinsot polhode
-% 
-% figure;
-% p_energy = surf(energy_ellipsoid.x, energy_ellipsoid.y, energy_ellipsoid.z, 'EdgeColor', 'none', 'FaceAlpha', face_alpha, 'FaceColor', 'r');
-% hold on;
-% grid on;
-% axis equal;
-% xlim([-ellipsoid_limits, ellipsoid_limits]);
-% ylim([-ellipsoid_limits, ellipsoid_limits]);
-% zlim([-ellipsoid_limits, ellipsoid_limits]);
-% p_momentum = surf(momentum_ellipsoid.x, momentum_ellipsoid.y, momentum_ellipsoid.z, 'EdgeColor', 'none', 'FaceAlpha', face_alpha, 'FaceColor', 'b');
-% p_w = plot3(w.x, w.y, w.z, 'k', 'LineWidth', line_width);
-% plot3(-w.x, w.y, w.z, 'k', 'LineWidth', line_width);
-% plot3(w.x, -w.y, w.z, 'k', 'LineWidth', line_width);
-% plot3(w.x, w.y, -w.z, 'k', 'LineWidth', line_width);
-% p_w_point = scatter3(w.x(1), w.y(2), w.z(3), 20*line_width, 'y', 'filled');
-% for t = 2:animate_speed:num_steps
-%     p_w_point.XData = w.x(t);
-%     p_w_point.YData = w.y(t);
-%     p_w_point.ZData = w.z(t);
-%     drawnow;
-% end
-% 
-% 
+%% animations
+
+% colour of the edges in the prism
+col = [0,     0.4470, 0.7410;
+    0.8500, 0.3250, 0.0980;
+    0.9290, 0.6940, 0.1250;
+    0.4940, 0.1840, 0.5560];
+
+% create the plots for the first time step
+for ii = 1:3
+    
+    figure(plot_id);
+    plot_id = plot_id + 1;
+    
+    % prism in inertial frame
+    subplot(1, 2, 1);
+    rectangular_prism = patch('Faces', shape.faces, 'Vertices', shape.vertices,...
+        'FaceVertexCData', col, 'FaceColor', 'flat');
+    view(3);
+    grid on;
+    hold on;
+    axis equal;
+    xlim([-shape.prism_limits, shape.prism_limits]);
+    ylim([-shape.prism_limits, shape.prism_limits]);
+    zlim([-shape.prism_limits, shape.prism_limits]);
+    title('Inertial frame');
+    scatter3(0, 0, 0, 20*line_width, 'k', 'filled');
+    
+    % Poinsot polhode
+    subplot(1, 2, 2);
+    p_energy = surf(energy_ellipsoid(ii).x, energy_ellipsoid(ii).y, energy_ellipsoid(ii).z,...
+        'EdgeColor', 'none', 'FaceAlpha', face_alpha, 'FaceColor', 'r');
+    grid on;
+    hold on;
+    axis equal;
+    xlim([-ellipsoid_limits(ii), ellipsoid_limits(ii)]);
+    ylim([-ellipsoid_limits(ii), ellipsoid_limits(ii)]);
+    zlim([-ellipsoid_limits(ii), ellipsoid_limits(ii)]);
+    title('Omega space (polhode)');
+    p_momentum = surf(momentum_ellipsoid(ii).x, momentum_ellipsoid(ii).y, momentum_ellipsoid(ii).z,...
+        'EdgeColor', 'none', 'FaceAlpha', face_alpha, 'FaceColor', 'b');
+    p_w = plot3(w(ii).x, w(ii).y, w(ii).z, 'y', 'LineWidth', line_width);
+    plot3(-w(ii).x, w(ii).y, w(ii).z, 'y', 'LineWidth', line_width);
+    plot3(w(ii).x, -w(ii).y, w(ii).z, 'y', 'LineWidth', line_width);
+    plot3(w(ii).x, w(ii).y, -w(ii).z, 'y', 'LineWidth', line_width);
+    p_w_point = scatter3(w(ii).x(1), w(ii).y(1), w(ii).z(1), 20*line_width, 'k', 'filled');
+    p_legend = legend([p_energy, p_momentum, p_w, p_w_point],...
+        'Energy ellipsoid', 'Angular momentum ellipsoid', 'Intersection of ellipsoids', 'Current angular momentum vector',...
+        'Location', 'south');
+    set(p_legend, 'Position', [0.572857142857143 0.0933333333333334 0.321428571428571 0.117857142857143]);
+    
+    % title for whole figure
+    title_string = sprintf('Main rotation about %s (%s-axis) (t = 0s)',...
+        dominant_rotation(ii).I, dominant_rotation(ii).axis);
+    a = annotation('textbox', [0 0.8 1 0.1], ...
+    'String', title_string, ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center',...
+    'FontSize', 14);
+    
+    % update the frame for each time step
+    for t = 2:animate_speed:num_steps
+        
+        % title
+        a.String = sprintf('Main rotation about %s (%s-axis) (t = %.1fs)',...
+            dominant_rotation(ii).I, dominant_rotation(ii).axis, t_vector(t));
+
+        % update angular velocity vector
+        subplot(1, 2, 1);
+        p_w_point.XData = w(ii).x(t);
+        p_w_point.YData = w(ii).y(t);
+        p_w_point.ZData = w(ii).z(t);
+
+        % update rectangular prism
+        subplot(1, 2, 2);
+        rectangular_prism.Vertices = [shape_sim(ii).XYZ(t,:); shape_sim(ii).XYz(t,:);...
+            shape_sim(ii).XyZ(t,:); shape_sim(ii).Xyz(t,:); shape_sim(ii).xYZ(t,:);...
+            shape_sim(ii).xYz(t,:); shape_sim(ii).xyZ(t,:); shape_sim(ii).xyz(t,:)];
+
+        drawnow;
+
+    end
+
+end
+
