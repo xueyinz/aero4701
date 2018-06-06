@@ -23,8 +23,6 @@ L.y = NaN(1, num_steps);        % y angular momentum vector [kg.m^2/s]
 L.z = NaN(1, num_steps);        % z angular momentum vector [kg.m^2/s]
 L.total = NaN(1, num_steps);    % total angular momentum vector [kg.m^2/s]
 
-
-
 %% (a) moments of inertia
 
 I.xx = shape.m*(shape.a^2 + shape.b^2)/12;

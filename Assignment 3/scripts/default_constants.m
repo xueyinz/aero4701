@@ -19,9 +19,9 @@ shape.b = 0.01;                 % height b [m]
 shape.c = 0.11;                 % width c [m]
 shape.m = 1;                    % mass [kg]
 
-w.x_initial = 0.08;             % initial x angular velocity [rad/s]
-w.y_initial = 0.06;             % initial y angular velocity [rad/s]
-w.z_initial = pi/2;             % initial z angular velocity [rad/s]
+w.x_initial = 0.62;             % initial x angular velocity [rad/s]
+w.y_initial = pi/2;             % initial y angular velocity [rad/s]
+w.z_initial = 0.5;             % initial z angular velocity [rad/s]
 
 %% flexible copper wire parameters
 
@@ -30,3 +30,11 @@ wire.d = 0.1;                   % diameter [cm]
 wire.temp = 0;                  % temperature [celsius]
 wire.c = 0.385;                 % specific heat [J/g]
 wire.density = 9;               % density [g/cm^3]
+
+%% simulation parameters
+
+global surf_size;
+surf_size = 49;
+
+face_alpha = 0.9;
+line_width = 2;

@@ -13,8 +13,8 @@ addpath('./scripts/', './functions/');
 
 default_constants;
 
-% %% Question 1
-% 
+%% Question 1
+
 question = 1;
 Q1_calculations;
 
@@ -22,7 +22,7 @@ Q1_calculations;
 
 question = 2;
 Q1_calculations;
-Q2_animate;
+% Q2_animate;
 % 
 % % y-axis
 % w.x_initial = 0.08;             % initial x angular velocity [rad/s]
@@ -40,4 +40,4 @@ Q2_animate;
 
 %% Question 3
 
-
+Q3_polhode;

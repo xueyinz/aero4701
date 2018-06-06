@@ -192,7 +192,7 @@ ellips2(:, 3) = Ltot.^2/Izz^2;
 d = 2*Etot./Ltot.^2;
 
 for o = 1:animStep:length(tvec)
-    o
+%     o
     figure(1)
     switch sim_type
         case 1
