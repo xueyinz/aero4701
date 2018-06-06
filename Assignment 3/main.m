@@ -3,6 +3,10 @@
 % Assignment 3
 %
 % main.m
+%
+% Note to marker: to simulate using different initial rotational
+% velocities, slab dimensions, or slab mass, you can modify the code inside
+% <user_constants.m>. Enter 'u' at run-time when prompted.
 
 clearvars;
 close all;
@@ -11,33 +15,28 @@ close all;
 
 addpath('./scripts/', './functions/');
 
-default_constants;
+constants_type = '';
 
-%% Question 1
-
-question = 1;
-Q1_calculations;
-
-%% Question 2
-
-question = 2;
-Q1_calculations;
-% Q2_animate;
-% 
-% % y-axis
-% w.x_initial = 0.08;             % initial x angular velocity [rad/s]
-% w.y_initial = pi/2;             % initial y angular velocity [rad/s]
-% w.z_initial = 0.1;              % initial z angular velocity [rad/s]
-% Q1_calculations;
-% Q2_animate;
-% 
-% % z-axis
-% w.x_initial = pi/2;             % initial x angular velocity [rad/s]
-% w.y_initial = 0.06;             % initial y angular velocity [rad/s]
-% w.z_initial = 0.08;             % initial z angular velocity [rad/s]
-% Q1_calculations;
-% Q2_animate;
-
-%% Question 3
-
-Q3_polhode;
+while isempty(constants_type)
+    
+    constants_type = input('Enter ''d'' for default connstants, ''u'' for user constants: ', 's');
+    
+    
+    if isempty(constants_type)
+        fprintf('Invalid input\n');
+    elseif ((constants_type == 'd') || (constants_type == 'D'))
+        fprintf('\nUsing default constants from assignment sheet\n\n');
+        default_constants;
+        Q1_calculations;
+        Q1_answers;
+        Q2_animate;
+        Q3_polhode;
+    elseif ((constants_type == 'u') || (constants_type == 'U'))
+        fprintf('\nUsing the user constants defined in <user_constants.m>\n\n');
+        user_constants;        
+    else
+        constants_type = '';
+        fprintf('Invalid input\n');
+    end
+    
+end

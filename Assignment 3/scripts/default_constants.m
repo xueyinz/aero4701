@@ -17,11 +17,12 @@ animate_speed = 50;             % speed multiplier for animation
 shape.a = 0.23;                 % length a [m]
 shape.b = 0.01;                 % height b [m]
 shape.c = 0.11;                 % width c [m]
+
 shape.m = 1;                    % mass [kg]
 
-w.x_initial = 0.62;             % initial x angular velocity [rad/s]
-w.y_initial = pi/2;             % initial y angular velocity [rad/s]
-w.z_initial = 0.5;             % initial z angular velocity [rad/s]
+w.x_initial = 0.12;             % initial x angular velocity [rad/s]
+w.y_initial = 0.23;             % initial y angular velocity [rad/s]
+w.z_initial = pi/2;             % initial z angular velocity [rad/s]
 
 %% flexible copper wire parameters
 
@@ -34,7 +35,7 @@ wire.density = 9;               % density [g/cm^3]
 %% simulation parameters
 
 global surf_size;
-surf_size = 49;
+surf_size = 49;                 % surf mesh size for the ellipsoids
 
-face_alpha = 0.9;
-line_width = 2;
+face_alpha = 0.9;               % transparency for the ellipsoids
+line_width = 1.5;               % angular velocity vector line widths

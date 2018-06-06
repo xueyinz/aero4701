@@ -27,5 +27,10 @@ p_w = plot3(w.x, w.y, w.z, 'k', 'LineWidth', line_width);
 plot3(-w.x, w.y, w.z, 'k', 'LineWidth', line_width);
 plot3(w.x, -w.y, w.z, 'k', 'LineWidth', line_width);
 plot3(w.x, w.y, -w.z, 'k', 'LineWidth', line_width);
-
-
+p_w_point = scatter3(w.x(1), w.y(2), w.z(3), 20*line_width, 'y', 'filled');
+for t = 2:animate_speed:num_steps
+    p_w_point.XData = w.x(t);
+    p_w_point.YData = w.y(t);
+    p_w_point.ZData = w.z(t);
+    drawnow;
+end
