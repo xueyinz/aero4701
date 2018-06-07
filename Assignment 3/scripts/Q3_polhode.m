@@ -41,4 +41,3 @@ for ii = 1:3
         momentum_ellipsoid(ii).a, momentum_ellipsoid(ii).b, momentum_ellipsoid(ii).c]);
     
 end
-

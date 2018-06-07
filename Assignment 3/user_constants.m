@@ -18,7 +18,7 @@ shape.a = 0.23;                 % length a [m]
 shape.b = 0.01;                 % height b [m]
 shape.c = 0.11;                 % width c [m]
 
-shape.m = 1;                    % mass [kg]
+shape.m = 10;                    % mass [kg]
 
 w_initial.x = 0.06;             % initial x angular velocity [rad/s]
 w_initial.y = 0.08;             % initial y angular velocity [rad/s]

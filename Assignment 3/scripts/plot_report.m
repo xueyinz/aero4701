@@ -1,6 +1,10 @@
-% for report
-
-close all;
+%% 440305585
+% AERO4701
+% Assignment 3
+%
+% plot_report.m
+%
+% graphs used in the report only
 
 % min(body_angles(1).psi)
 % min(body_angles(1).theta)

@@ -6,88 +6,88 @@
 
 plot_id = 1;
 
-% %% plotting angular velocity
-% 
-% figure(plot_id);
-% plot_id = plot_id + 1;
-% for ii = 1:3
-%     
-%     subplot(3, 1, ii);
-%     
-%     plot(t_vector, w(ii).x, 'LineWidth', line_width);
-%     hold on;
-%     grid on;
-%     plot(t_vector, w(ii).y, 'LineWidth', line_width);
-%     plot(t_vector, w(ii).z, 'LineWidth', line_width);
-%     
-%     title_string = sprintf('\\omega for main rotation about %s (%s-axis)',...
-%         dominant_rotation(ii).I, dominant_rotation(ii).axis);
-%     title(title_string);
-%     legend('\omega_x', '\omega_y', '\omega_z', 'Location', 'eastoutside');
-%     ylabel('\omega (rad/s)');
-% 
-% end
-% xlabel('Time (s)');
-% if saving
-%     saving_string = sprintf('angular_velocity%s.png', saving_type);
-%     saveas(gcf, saving_string);
-% end
-% 
-% %% plotting angular momentum
-% 
-% figure(plot_id);
-% plot_id = plot_id + 1;
-% for ii = 1:3
-%     
-%     subplot(3, 1, ii);
-% 
-%     plot(t_vector, L(ii).x, 'LineWidth', line_width);
-%     hold on;
-%     grid on;
-%     plot(t_vector, L(ii).y, 'LineWidth', line_width);
-%     plot(t_vector, L(ii).z, 'LineWidth', line_width);
-%     plot(t_vector, L(ii).total, 'LineWidth', line_width);
-%     
-%     title_string = sprintf('L for main rotation about %s (%s-axis)',...
-%         dominant_rotation(ii).I, dominant_rotation(ii).axis);
-%     title(title_string);
-%     legend('L_x', 'L_y', 'L_z', 'L_t_o_t_a_l', 'Location', 'eastoutside');
-%     ylabel('L (kg.m^2/s)');
-% 
-% end
-% xlabel('Time (s)');
-% if saving
-%     saving_string = sprintf('angular_momentum%s.png', saving_type);
-%     saveas(gcf, saving_string);
-% end
-% 
-% %% plotting rotational kinetic energy
-% 
-% figure(plot_id);
-% plot_id = plot_id + 1;
-% for ii = 1:3
-%     
-%     subplot(3, 1, ii);
-% 
-%     plot(t_vector, E(ii).xx, 'LineWidth', line_width);
-%     hold on;
-%     grid on;
-%     plot(t_vector, E(ii).yy, 'LineWidth', line_width);
-%     plot(t_vector, E(ii).zz, 'LineWidth', line_width);
-%     plot(t_vector, E(ii).total, 'LineWidth', line_width);
-% 
-%     title_string = sprintf('E for main rotation about %s (%s-axis)',...
-%         dominant_rotation(ii).I, dominant_rotation(ii).axis);
-%     title(title_string);
-%     legend('E_x', 'E_y', 'E_z', 'E_t_o_t_a_l', 'Location', 'eastoutside');
-%     ylabel('E (J)');
-%     
-% end
-% xlabel('Time (s)');
-% if saving
-%     saving_string = sprintf('kinetic_energy%s.png', saving_type);
-%     saveas(gcf, saving_string);
-% end
+%% plotting angular velocity
+
+figure(plot_id);
+plot_id = plot_id + 1;
+for ii = 1:3
+    
+    subplot(3, 1, ii);
+    
+    plot(t_vector, w(ii).x, 'LineWidth', line_width);
+    hold on;
+    grid on;
+    plot(t_vector, w(ii).y, 'LineWidth', line_width);
+    plot(t_vector, w(ii).z, 'LineWidth', line_width);
+    
+    title_string = sprintf('\\omega for main rotation about %s (%s-axis)',...
+        dominant_rotation(ii).I, dominant_rotation(ii).axis);
+    title(title_string);
+    legend('\omega_x', '\omega_y', '\omega_z', 'Location', 'eastoutside');
+    ylabel('\omega (rad/s)');
+
+end
+xlabel('Time (s)');
+if saving
+    saving_string = sprintf('angular_velocity%s.png', saving_type);
+    saveas(gcf, saving_string);
+end
+
+%% plotting angular momentum
+
+figure(plot_id);
+plot_id = plot_id + 1;
+for ii = 1:3
+    
+    subplot(3, 1, ii);
+
+    plot(t_vector, L(ii).x, 'LineWidth', line_width);
+    hold on;
+    grid on;
+    plot(t_vector, L(ii).y, 'LineWidth', line_width);
+    plot(t_vector, L(ii).z, 'LineWidth', line_width);
+    plot(t_vector, L(ii).total, 'LineWidth', line_width);
+    
+    title_string = sprintf('L for main rotation about %s (%s-axis)',...
+        dominant_rotation(ii).I, dominant_rotation(ii).axis);
+    title(title_string);
+    legend('L_x', 'L_y', 'L_z', 'L_t_o_t_a_l', 'Location', 'eastoutside');
+    ylabel('L (kg.m^2/s)');
+
+end
+xlabel('Time (s)');
+if saving
+    saving_string = sprintf('angular_momentum%s.png', saving_type);
+    saveas(gcf, saving_string);
+end
+
+%% plotting rotational kinetic energy
+
+figure(plot_id);
+plot_id = plot_id + 1;
+for ii = 1:3
+    
+    subplot(3, 1, ii);
+
+    plot(t_vector, E(ii).xx, 'LineWidth', line_width);
+    hold on;
+    grid on;
+    plot(t_vector, E(ii).yy, 'LineWidth', line_width);
+    plot(t_vector, E(ii).zz, 'LineWidth', line_width);
+    plot(t_vector, E(ii).total, 'LineWidth', line_width);
+
+    title_string = sprintf('E for main rotation about %s (%s-axis)',...
+        dominant_rotation(ii).I, dominant_rotation(ii).axis);
+    title(title_string);
+    legend('E_x', 'E_y', 'E_z', 'E_t_o_t_a_l', 'Location', 'eastoutside');
+    ylabel('E (J)');
+    
+end
+xlabel('Time (s)');
+if saving
+    saving_string = sprintf('kinetic_energy%s.png', saving_type);
+    saveas(gcf, saving_string);
+end
 
 %% animations
 
@@ -142,7 +142,7 @@ for ii = 1:3
     plot3(w(ii).x, w(ii).y, -w(ii).z, 'y', 'LineWidth', line_width);
     p_w_point = scatter3(w(ii).x(1), w(ii).y(1), w(ii).z(1), 20*line_width, 'k', 'filled');
     p_legend = legend([p_energy, p_momentum, p_w, p_w_point],...
-        'Energy ellipsoid', 'Angular momentum ellipsoid', 'Intersection of ellipsoids', 'Current angular momentum vector',...
+        'Energy ellipsoid', 'Angular momentum ellipsoid', 'Intersection of ellipsoids', 'Current \omega vector',...
         'Location', 'south');
     set(p_legend, 'Position', [0.572857142857143 0.0933333333333334 0.321428571428571 0.117857142857143]);
     
@@ -175,8 +175,18 @@ for ii = 1:3
             shape_sim(ii).xYz(t,:); shape_sim(ii).xyZ(t,:); shape_sim(ii).xyz(t,:)];
 
         drawnow;
-
+        
+%         if saving
+%             if t == 20002 || t == 40002
+%                 saving_string = sprintf('polhode_%s_t%ds.png', dominant_rotation(ii).I, t_vector(t));
+%                 saveas(gcf, saving_string);
+%             end
+%         end
     end
-
+    
+%     if saving
+%         saving_string = sprintf('polhode_%s_t%ds.png', dominant_rotation(ii).I, t_vector(t));
+%         saveas(gcf, saving_string);
+%     end
 end
 
