@@ -19,17 +19,17 @@ addpath('./scripts/', './functions/');
 constants_type = '';
 while isempty(constants_type)
     
-    constants_type = input('Enter ''d'' for default constants, ''u'' for user constants: ', 's');
+    constants_type = input('Enter ''d'' to load default constants, or ''u'' to load user-defined constants: ', 's');
     
     % check user input
     if isempty(constants_type)
         fprintf('Invalid input\n');
     elseif ((constants_type == 'd') || (constants_type == 'D'))
         constants_type = 'd';
-        fprintf('\nUsing default constants from assignment sheet...\n\n');
+        fprintf('\nLoading default constants from assignment sheet...\n\n');
         default_constants;
     elseif ((constants_type == 'u') || (constants_type == 'U'))
-        fprintf('\nUsing the user constants defined in <user_constants.m>...\n\n');
+        fprintf('\nLoading constants defined in <user_constants.m>...\n\n');
         user_constants;        
     else
         constants_type = '';
@@ -55,4 +55,6 @@ Q2_animate;
 Q3_polhode;
 
 % let the simulation run!
+saving = true;
+saving_type = 'large_dt';
 plot_everything;

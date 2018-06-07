@@ -26,11 +26,11 @@ function dominant_rotation = get_dominant_rotation_axis(I, w_array)
     moi_rank = idx_axes(dominant_axis);
     
     if moi_rank == 1
-        dominant_rotation.I = 'minimum MOI axis';
+        dominant_rotation.I = 'minimum axis';
     elseif moi_rank == 2
-        dominant_rotation.I = 'intermediate MOI axis';
+        dominant_rotation.I = 'intermediate axis';
     elseif moi_rank == 3
-        dominant_rotation.I = 'maximum MOI axis';
+        dominant_rotation.I = 'maximum axis';
     else
         error('Something wrong with the indexing logic in get_dominant_rotation_axis');
     end

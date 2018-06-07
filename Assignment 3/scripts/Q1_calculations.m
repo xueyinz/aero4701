@@ -48,12 +48,6 @@ E.zz = NaN(1, num_steps);
 E.total = NaN(1, num_steps);
 E = repmat(E, 1, 3);
 
-% absolute body angles
-body_angles.psi = NaN(1, num_steps);
-body_angles.theta = NaN(1, num_steps);
-body_angles.phi = NaN(1, num_steps);
-body_angles = repmat(body_angles, 1, 3);
-
 %% loop three times for rotation about the three axes
 
 for ii = 1:3
@@ -103,9 +97,6 @@ for ii = 1:3
         L(ii).total(t) = norm([L(ii).x(t), L(ii).y(t), L(ii).z(t)]);
 
     end
-
-    % angles in the inertial frame of reference
-    body_angles(ii) = get_body_frame_angles(w(ii).x, w(ii).y, w(ii).z, dt);
 
     % (d) rotational kinetic energy
     E(ii).xx = (1/2) * I.xx * w(ii).x.^2;

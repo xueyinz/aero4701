@@ -10,7 +10,7 @@
 
 t_end = 60;                     % total simulation time [s]
 dt = 0.001;                     % time step [s]
-animate_speed = 100;             % speed multiplier for animation
+animate_speed = 100;            % speed multiplier for animation
 
 %% rectangular prism parameters
 

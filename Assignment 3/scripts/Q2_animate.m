@@ -6,6 +6,12 @@
 
 %% initialisations
 
+% absolute body angles
+body_angles.psi = NaN(1, num_steps);
+body_angles.theta = NaN(1, num_steps);
+body_angles.phi = NaN(1, num_steps);
+body_angles = repmat(body_angles, 1, 3);
+
 % initial corner positions and geometry of the rectangular prism (before rotation)
 shape.XYZ = [shape.c/2, shape.b/2, shape.a/2];
 shape.XYz = [shape.c/2, shape.b/2, -shape.a/2];
@@ -41,6 +47,9 @@ dominant_rotation = repmat(dominant_rotation, 1, 3);
 %% loop three times for rotation about the three axes
 
 for ii = 1:3
+    
+    % angles in the inertial frame of reference
+    body_angles(ii) = get_body_frame_angles(w(ii).x, w(ii).y, w(ii).z, dt);
     
     % rotation matrix to transform body frame into intertial frame
     rotation_matrix = get_rotation_matrix(body_angles(ii).psi, body_angles(ii).theta, body_angles(ii).phi);

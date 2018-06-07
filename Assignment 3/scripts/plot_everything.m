@@ -6,78 +6,93 @@
 
 plot_id = 1;
 
-%% plotting angular velocity
-
-figure(plot_id);
-plot_id = plot_id + 1;
-for ii = 1:3
-    
-    subplot(3, 1, ii);
-    
-    plot(t_vector, w(ii).x, 'LineWidth', line_width);
-    hold on;
-    grid on;
-    plot(t_vector, w(ii).y, 'LineWidth', line_width);
-    plot(t_vector, w(ii).z, 'LineWidth', line_width);
-    
-    title_string = sprintf('Main rotation about %s (%s-axis)',...
-        dominant_rotation(ii).I, dominant_rotation(ii).axis);
-    title(title_string);
-    legend('\omega_x', '\omega_y', '\omega_z', 'Location', 'eastoutside');
-
-end
-saveas(gcf, 'angular_velocity.png');
-
-%% plotting angular momentum
-
-figure(plot_id);
-plot_id = plot_id + 1;
-for ii = 1:3
-    
-    subplot(3, 1, ii);
-
-    plot(t_vector, L(ii).x, 'LineWidth', line_width);
-    hold on;
-    grid on;
-    plot(t_vector, L(ii).y, 'LineWidth', line_width);
-    plot(t_vector, L(ii).z, 'LineWidth', line_width);
-    plot(t_vector, L(ii).total, 'LineWidth', line_width);
-    
-    title_string = sprintf('Main rotation about %s (%s-axis)',...
-        dominant_rotation(ii).I, dominant_rotation(ii).axis);
-    title(title_string);
-    legend('L_x', 'L_y', 'L_z', 'L_total', 'Location', 'eastoutside');
-
-end
-saveas(gcf, 'angular_momentum.png');
-
-%% plotting rotational kinetic energy
-
-figure(plot_id);
-plot_id = plot_id + 1;
-for ii = 1:3
-    
-    subplot(3, 1, ii);
-
-    plot(t_vector, E(ii).xx, 'LineWidth', line_width);
-    hold on;
-    grid on;
-    plot(t_vector, E(ii).yy, 'LineWidth', line_width);
-    plot(t_vector, E(ii).zz, 'LineWidth', line_width);
-    plot(t_vector, E(ii).total, 'LineWidth', line_width);
-
-    title_string = sprintf('Main rotation about %s (%s-axis)',...
-        dominant_rotation(ii).I, dominant_rotation(ii).axis);
-    title(title_string);
-    legend('E_x', 'E_y', 'E_z', 'E_total', 'Location', 'eastoutside');
-    
-end
-saveas(gcf, 'kinetic_energy.png');
+% %% plotting angular velocity
+% 
+% figure(plot_id);
+% plot_id = plot_id + 1;
+% for ii = 1:3
+%     
+%     subplot(3, 1, ii);
+%     
+%     plot(t_vector, w(ii).x, 'LineWidth', line_width);
+%     hold on;
+%     grid on;
+%     plot(t_vector, w(ii).y, 'LineWidth', line_width);
+%     plot(t_vector, w(ii).z, 'LineWidth', line_width);
+%     
+%     title_string = sprintf('\\omega for main rotation about %s (%s-axis)',...
+%         dominant_rotation(ii).I, dominant_rotation(ii).axis);
+%     title(title_string);
+%     legend('\omega_x', '\omega_y', '\omega_z', 'Location', 'eastoutside');
+%     ylabel('\omega (rad/s)');
+% 
+% end
+% xlabel('Time (s)');
+% if saving
+%     saving_string = sprintf('angular_velocity%s.png', saving_type);
+%     saveas(gcf, saving_string);
+% end
+% 
+% %% plotting angular momentum
+% 
+% figure(plot_id);
+% plot_id = plot_id + 1;
+% for ii = 1:3
+%     
+%     subplot(3, 1, ii);
+% 
+%     plot(t_vector, L(ii).x, 'LineWidth', line_width);
+%     hold on;
+%     grid on;
+%     plot(t_vector, L(ii).y, 'LineWidth', line_width);
+%     plot(t_vector, L(ii).z, 'LineWidth', line_width);
+%     plot(t_vector, L(ii).total, 'LineWidth', line_width);
+%     
+%     title_string = sprintf('L for main rotation about %s (%s-axis)',...
+%         dominant_rotation(ii).I, dominant_rotation(ii).axis);
+%     title(title_string);
+%     legend('L_x', 'L_y', 'L_z', 'L_t_o_t_a_l', 'Location', 'eastoutside');
+%     ylabel('L (kg.m^2/s)');
+% 
+% end
+% xlabel('Time (s)');
+% if saving
+%     saving_string = sprintf('angular_momentum%s.png', saving_type);
+%     saveas(gcf, saving_string);
+% end
+% 
+% %% plotting rotational kinetic energy
+% 
+% figure(plot_id);
+% plot_id = plot_id + 1;
+% for ii = 1:3
+%     
+%     subplot(3, 1, ii);
+% 
+%     plot(t_vector, E(ii).xx, 'LineWidth', line_width);
+%     hold on;
+%     grid on;
+%     plot(t_vector, E(ii).yy, 'LineWidth', line_width);
+%     plot(t_vector, E(ii).zz, 'LineWidth', line_width);
+%     plot(t_vector, E(ii).total, 'LineWidth', line_width);
+% 
+%     title_string = sprintf('E for main rotation about %s (%s-axis)',...
+%         dominant_rotation(ii).I, dominant_rotation(ii).axis);
+%     title(title_string);
+%     legend('E_x', 'E_y', 'E_z', 'E_t_o_t_a_l', 'Location', 'eastoutside');
+%     ylabel('E (J)');
+%     
+% end
+% xlabel('Time (s)');
+% if saving
+%     saving_string = sprintf('kinetic_energy%s.png', saving_type);
+%     saveas(gcf, saving_string);
+% end
 
 %% animations
 
 % colour of the edges in the prism
-col = [0,     0.4470, 0.7410;
+colour = [0,     0.4470, 0.7410;
     0.8500, 0.3250, 0.0980;
     0.9290, 0.6940, 0.1250;
     0.4940, 0.1840, 0.5560];
@@ -91,7 +106,7 @@ for ii = 1:3
     % prism in inertial frame
     subplot(1, 2, 1);
     rectangular_prism = patch('Faces', shape.faces, 'Vertices', shape.vertices,...
-        'FaceVertexCData', col, 'FaceColor', 'flat');
+        'FaceVertexCData', colour, 'FaceColor', 'flat');
     view(3);
     grid on;
     hold on;
@@ -99,6 +114,9 @@ for ii = 1:3
     xlim([-shape.prism_limits, shape.prism_limits]);
     ylim([-shape.prism_limits, shape.prism_limits]);
     zlim([-shape.prism_limits, shape.prism_limits]);
+    xlabel('x (m)');
+    ylabel('y (m)');
+    zlabel('z (m)');
     title('Inertial frame');
     scatter3(0, 0, 0, 20*line_width, 'k', 'filled');
     
@@ -112,7 +130,10 @@ for ii = 1:3
     xlim([-ellipsoid_limits(ii), ellipsoid_limits(ii)]);
     ylim([-ellipsoid_limits(ii), ellipsoid_limits(ii)]);
     zlim([-ellipsoid_limits(ii), ellipsoid_limits(ii)]);
-    title('Omega space (polhode)');
+    xlabel('\omega_x (rad/s)');
+    ylabel('\omega_y (rad/s)');
+    zlabel('\omega_z (rad/s)');
+    title('\omega space (polhode)');
     p_momentum = surf(momentum_ellipsoid(ii).x, momentum_ellipsoid(ii).y, momentum_ellipsoid(ii).z,...
         'EdgeColor', 'none', 'FaceAlpha', face_alpha, 'FaceColor', 'b');
     p_w = plot3(w(ii).x, w(ii).y, w(ii).z, 'y', 'LineWidth', line_width);
